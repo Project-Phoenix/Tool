@@ -19,56 +19,54 @@
 package de.phoenix.swtapp;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class HelloWorld {
-    
+public class SWT_App {
 
     public static void main(String[] args) {
 
         Display display = new Display();
-        Shell shell = new Shell(display);
+        final Shell shell = new Shell(display);
         GridLayout layout = new GridLayout(2, false);
         shell.setLayout(layout);
-        shell.setText("Hello World");
-        
-        
-        shell.setSize(500, 500);
-        center(shell);
+        shell.setText("SWT_App");
 
-        Label label = new Label(shell, SWT.BORDER);
-       
+        shell.setSize(200, 80);
+        centerWindow(shell);
 
-        label.setText("Test1");
-       
+        // First ROW
 
-        label.setToolTipText("Just for Testing");
-        Button button = new Button(shell, SWT.PUSH);
-        button.setText("Press Me");
-        label = new Label(shell, SWT.BORDER);
-        label.setText("Another One");
-        label.setBackground(display.getSystemColor(SWT.COLOR_DARK_GREEN));
+        Button closeButton = new Button(shell, SWT.PUSH);
+        closeButton.setText("Close");
+    
+        GridData gridDataclsbutton = new GridData();
+        gridDataclsbutton.horizontalAlignment = GridData.FILL;
+        gridDataclsbutton.horizontalSpan = 1;
+        closeButton.setLayoutData(gridDataclsbutton);
 
-        Text text = new Text(shell, SWT.NONE);
-        text.setText("Write Something here");
-        text.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-        text.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-        
-        Text text2 = new Text(shell, SWT.NONE);
-        text2.setText("DONT REMOVE THIS TEXT!!!");
-        text2.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
-        text2.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+        closeButton.addSelectionListener(new SelectionListener() {
 
-        text.pack();
-        label.pack();
+            public void widgetSelected(SelectionEvent e) {
+                shell.getDisplay().dispose();
+                System.exit(0);
+            }
+
+            public void widgetDefaultSelected(SelectionEvent e) {
+
+            }
+        });
 
         shell.open();
 
@@ -80,17 +78,16 @@ public class HelloWorld {
 
     }
 
-    private static void center(Shell shell) {
+    private static void centerWindow(Shell shell) {
 
         Rectangle bounds = shell.getDisplay().getBounds();
 
         Point p = shell.getSize();
 
-        int nWid = (bounds.width - p.x) / 2;
-        int nHei = (bounds.height - p.y) / 2;
+        int sWidth = (bounds.width - p.x) / 2;
+        int sHeight = (bounds.height - p.y) / 2;
 
-        shell.setBounds(nWid, nHei, p.x, p.y);
+        shell.setBounds(sWidth, sHeight, p.x, p.y);
 
     }
 }
-
