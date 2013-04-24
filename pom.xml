@@ -78,7 +78,7 @@
 				</os>
 			</activation>
 			<properties>
-				<swt.artifactId>org.eclipse.swt.cocoa.macosx.x86</swt.artifactId>
+				<swt.artifactId>org.eclipse.swt.cocoa.macosx</swt.artifactId>
 			</properties>
 		</profile>
 		<profile>
