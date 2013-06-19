@@ -18,10 +18,12 @@
 
 package de.phoenix.swtapp;
 
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -40,16 +42,22 @@ public class SWT_App {
         Display display = new Display();
         final Shell shell = new Shell(display);
         GridLayout layout = new GridLayout(2, false);
+        
+        // Hier noch ein Window Icon einfuegen
+        
+//        Image window_Icon = new Image(display,"Phoenix_Window_Icon");  
+//        shell.setImage(window_Icon); 
+        
         shell.setLayout(layout);
-        shell.setText("SWT_App");
+        shell.setText("Phoenix");
 
-        shell.setSize(200, 80);
+        shell.setSize(650, 400);
         centerWindow(shell);
 
         // First ROW
 
         Button closeButton = new Button(shell, SWT.PUSH);
-        closeButton.setText("Close");
+        closeButton.setText("");
     
         GridData gridDataclsbutton = new GridData();
         gridDataclsbutton.horizontalAlignment = GridData.FILL;
@@ -67,6 +75,9 @@ public class SWT_App {
 
             }
         });
+        
+               
+        
 
         shell.open();
 
