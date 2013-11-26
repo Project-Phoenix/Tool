@@ -34,6 +34,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.internal.win32.OS;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -55,17 +56,24 @@ public class SWT_App  {
         Shell shell = new SWT_App().createShell(display);
         shell.setSize(650, 400);
         centerWindow(shell);
+        
         shell.open();
+        
+        
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch())
                 display.sleep();
+             
         }
         display.dispose();
 
     }
+
+
     
     public Shell createShell(final Display display){
-        final Shell shell= new Shell(display);
+        //Shell is in the foreground. Better usability for DND
+        final Shell shell= new Shell(display, SWT.ON_TOP| SWT.CLOSE);
         shell.setText("Phoenix");
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns=3;
