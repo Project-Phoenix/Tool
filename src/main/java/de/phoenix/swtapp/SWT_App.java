@@ -23,6 +23,7 @@ package de.phoenix.swtapp;
 import java.io.File;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -47,6 +48,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
@@ -101,20 +103,25 @@ public class SWT_App  {
         
         final FileTransfer fileTransfer = FileTransfer.getInstance();
         final Table control = new Table(shell, SWT.FILL);
-        
-        TableItem itemText= new TableItem(control, SWT.NONE);
-        itemText.setText("Drag File To This Place ");
+        control.setHeaderVisible(true);
+
+        TableColumn tableColumnLeft = new TableColumn(control, SWT.NONE);
+        tableColumnLeft.setWidth(427);
+        tableColumnLeft.setText("Drag File To This Place");
+
+        TableColumn tableColumnRight = new TableColumn(control, SWT.NONE);
+        tableColumnRight.setWidth(100);    
 
         
-        DropTarget targetShell= new DropTarget(control,  DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_LINK
-                | DND.DROP_MOVE);
+        DropTarget targetShell= new DropTarget(control,  DND.DROP_DEFAULT | DND.DROP_COPY |
+                DND.DROP_LINK | DND.DROP_MOVE);
+        
         targetShell.setTransfer(new Transfer[]{fileTransfer});
+        
         targetShell.addDropListener(new DropTargetListener() {
-            
-            
-            public void dropAccept(DropTargetEvent event) {
-               
                 
+            public void dropAccept(DropTargetEvent event) {
+                  
             }
             
             public void drop(DropTargetEvent event) {
@@ -123,12 +130,20 @@ public class SWT_App  {
                     String[] files=(String[])event.data;
                     for (int i = 0; i < files.length; i++) {
                         TableItem item= new TableItem(control, SWT.NONE);
-                        File f=new File(files[i]);                   
+                        File f=new File(files[i]);
                         item.setText(f.getName());
                         
+                        //A delete button for each object dragged into the table
+                        
+                       
+                        
+                                          
+                   
+                        
+                        
+                        
                     }
-                }
-                
+                }                  
             }
             
             public void dragOver(DropTargetEvent event) {
@@ -138,12 +153,10 @@ public class SWT_App  {
             }
             
             public void dragOperationChanged(DropTargetEvent event) {
-             
-                
+              
             }
             
             public void dragLeave(DropTargetEvent event) {
-                // TODO Auto-generated method stub
                 
             }
             
@@ -164,10 +177,12 @@ public class SWT_App  {
                         break;
                     }
                 }
-            }
-                
+            }    
             
         });
+        
+        
+        
         
         GridData gridTable= new GridData();
         gridTable.horizontalSpan=2;
