@@ -20,6 +20,8 @@ package de.phoenix.swtapp;
 
 
 
+import java.io.File;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.DND;
@@ -58,8 +60,7 @@ public class SWT_App  {
         centerWindow(shell);
         
         shell.open();
-        
-        
+            
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch())
                 display.sleep();
@@ -112,7 +113,7 @@ public class SWT_App  {
             
             
             public void dropAccept(DropTargetEvent event) {
-                // TODO Auto-generated method stub
+               
                 
             }
             
@@ -122,7 +123,8 @@ public class SWT_App  {
                     String[] files=(String[])event.data;
                     for (int i = 0; i < files.length; i++) {
                         TableItem item= new TableItem(control, SWT.NONE);
-                        item.setText(files[i]);
+                        File f=new File(files[i]);                   
+                        item.setText(f.getName());
                         
                     }
                 }
