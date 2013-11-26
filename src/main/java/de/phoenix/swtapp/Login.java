@@ -18,12 +18,15 @@
 
 package de.phoenix.swtapp;
 
+import java.awt.Graphics;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -35,24 +38,32 @@ import org.eclipse.swt.widgets.Text;
  *
  */
 
-public class Login {
+public class Login extends Composite {
     
-    private LoginHandler  login;
     
-    public Login() {
-    login = new TabeaLoginHandler();
     
+//    private LoginHandler  login;
+//    
+//    public Login(Shell shell) {
+//    login = new TabeaLoginHandler();
+//    
+//    }
+
+    public Login(Composite parent, int style) {
+        super(parent, 0);
+        // TODO Auto-generated constructor stub
     }
 
-    public static void main(String[] args){
-
-        Display display = new Display();
-        final Shell shell= new Shell(display);
+    public Shell loginShell(final Display display){
+      
+        final Shell shell= new Shell();
+        
         GridLayout gridlayout = new GridLayout();
-        gridlayout.numColumns = 3;
+        gridlayout.numColumns = 3;       
             
         shell.setLayout(gridlayout);
         shell.setSize(185, 180);
+//        shell.setParent(SWT_App.openLoginShell(shell));
         shell.setText("Login");
        
         GridData gridData_fill = new GridData();
@@ -92,8 +103,8 @@ public class Login {
         button_login_cancel.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-                shell.getDisplay().dispose();
-                System.exit(0);
+               shell.getDisplay().close();
+                
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -104,11 +115,10 @@ public class Login {
 
         shell.pack();
         shell.open();
+        
+        return shell;
 
-        while (!shell.isDisposed()) {
-            if (!display.readAndDispatch())
-                display.sleep();
-        }
-        display.dispose();
+
     } 
 }
+   

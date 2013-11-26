@@ -18,16 +18,16 @@
 
 package de.phoenix.swtapp;
 
-
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -47,12 +47,12 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-public class SWT_App  {
+public class Test2 extends ByteArrayTransfer {
 
     public static void main( String[] args) {
 
         Display display = new Display();
-        Shell shell = new SWT_App().createShell(display);
+        Shell shell = new Test2().createShell(display);
         shell.setSize(650, 400);
         centerWindow(shell);
         shell.open();
@@ -89,19 +89,16 @@ public class SWT_App  {
         placeHolder.setLayoutData(gridData);
              
         //DRAG and DROP
-        
+        Test _instance = new Test();
         final FileTransfer fileTransfer = FileTransfer.getInstance();
         final Table control = new Table(shell, SWT.FILL);
         
-        TableItem itemText= new TableItem(control, SWT.NONE);
-        itemText.setText("Drag File To This Place ");
-
-        
-        DropTarget targetShell= new DropTarget(control,  DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_LINK
-                | DND.DROP_MOVE);
-        targetShell.setTransfer(new Transfer[]{fileTransfer});
-        targetShell.addDropListener(new DropTargetListener() {
-            
+        TableItem item = new TableItem(control, SWT.NONE);
+        item.setText("Drag data over this site to see the native transfer type.");
+        DropTarget target = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_LINK
+            | DND.DROP_MOVE);
+        target.setTransfer(new Transfer[] { Test.getInstance() });
+        target.addDropListener(new DropTargetListener() {
             
             public void dropAccept(DropTargetEvent event) {
                 // TODO Auto-generated method stub
@@ -109,26 +106,17 @@ public class SWT_App  {
             }
             
             public void drop(DropTargetEvent event) {
-                
-                if(fileTransfer.isSupportedType(event.currentDataType)){
-                    String[] files=(String[])event.data;
-                    for (int i = 0; i < files.length; i++) {
-                        TableItem item= new TableItem(control, SWT.NONE);
-                        item.setText(files[i]);
-                        
-                    }
-                }
+                // TODO Auto-generated method stub
                 
             }
             
             public void dragOver(DropTargetEvent event) {
-                
-                event.feedback = DND.FEEDBACK_SELECT | DND.FEEDBACK_SCROLL;
+                // TODO Auto-generated method stub
                 
             }
             
             public void dragOperationChanged(DropTargetEvent event) {
-             
+                // TODO Auto-generated method stub
                 
             }
             
@@ -137,27 +125,33 @@ public class SWT_App  {
                 
             }
             
-            public void dragEnter(DropTargetEvent event) {
-                
-                if(event.detail == DND.DROP_DEFAULT){
-                    if((event.operations & DND.DROP_LINK) !=0)
-                        event.detail=DND.DROP_LINK;
-                    else {event.detail=DND.DROP_NONE;}
-                }
-                
-                for (int i = 0; i < event.dataTypes.length; i++) {
-                    if(fileTransfer.isSupportedType(event.dataTypes[i])){
-                        event.currentDataType= event.dataTypes[i];
-                        if(event.detail != DND.DROP_LINK){
-                            event.detail = DND.DROP_NONE;
-                        }
-                        break;
-                    }
-                }
+         
+          public void dragEnter(DropTargetEvent event) {
+            String ops = "";
+            if ((event.operations & DND.DROP_COPY) != 0)
+              ops += "Copy;";
+            if ((event.operations & DND.DROP_MOVE) != 0)
+              ops += "Move;";
+            if ((event.operations & DND.DROP_LINK) != 0)
+              ops += "Link;";
+            control.removeAll();
+            TableItem item1 = new TableItem(control, SWT.NONE);
+            item1.setText("Allowed Operations are " + ops);
+
+            if (event.detail == DND.DROP_DEFAULT) {
+              if ((event.operations & DND.DROP_COPY) != 0) {
+                event.detail = DND.DROP_COPY;
+              } else if ((event.operations & DND.DROP_LINK) != 0) {
+                event.detail = DND.DROP_LINK;
+              } else if ((event.operations & DND.DROP_MOVE) != 0) {
+                event.detail = DND.DROP_MOVE;
+              }
             }
-                
-            
+
+          
+          }
         });
+
         
         GridData gridTable= new GridData();
         gridTable.horizontalSpan=2;
@@ -223,5 +217,17 @@ public class SWT_App  {
 
         shell.setBounds(sWidth, sHeight, p.x, p.y);
 
+    }
+
+    @Override
+    protected int[] getTypeIds() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected String[] getTypeNames() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
