@@ -104,13 +104,16 @@ public class SWT_App  {
         final FileTransfer fileTransfer = FileTransfer.getInstance();
         final Table control = new Table(shell, SWT.FILL);
         control.setHeaderVisible(true);
-
+        
         TableColumn tableColumnLeft = new TableColumn(control, SWT.NONE);
         tableColumnLeft.setWidth(427);
         tableColumnLeft.setText("Drag File To This Place");
 
         TableColumn tableColumnRight = new TableColumn(control, SWT.NONE);
-        tableColumnRight.setWidth(100);    
+        tableColumnRight.setWidth(100);  
+        
+        
+        //edit the right column of the table for buttons, which can delete a line
 
         
         DropTarget targetShell= new DropTarget(control,  DND.DROP_DEFAULT | DND.DROP_COPY |
@@ -128,19 +131,37 @@ public class SWT_App  {
                 
                 if(fileTransfer.isSupportedType(event.currentDataType)){
                     String[] files=(String[])event.data;
+                    
                     for (int i = 0; i < files.length; i++) {
-                        TableItem item= new TableItem(control, SWT.NONE);
+                        
+                        //TODO delete double input
+
+                        new TableItem(control, SWT.NONE);
+                        TableItem[] items = control.getItems();
+                        
+                        for (int j = 0; j < items.length; j++) {
+                            
+                        TableEditor editor= new TableEditor(control);
+                        
                         File f=new File(files[i]);
-                        item.setText(f.getName());
-                        
-                        //A delete button for each object dragged into the table
-                        
+                        Text filename= new Text(control,SWT.NONE);
+                        filename.setText(f.getName());
+                        editor.grabHorizontal=true;
+                        editor.grabVertical= true;
+                        editor.setEditor(filename, items[j], 0);
+                        editor.layout();
                        
+                        //A delete button for each object dragged into the table
+                        TableEditor editor2 = new TableEditor(control);
+                        Button closer= new Button(control, SWT.PUSH);
+                        closer.setText("Remove");                    
+                        editor2.grabHorizontal=true;
+                        editor2.grabVertical= true;
+                        editor2.setEditor(closer, items[j], 1);
+                        editor2.layout();
                         
-                                          
-                   
-                        
-                        
+                  
+                        }                      
                         
                     }
                 }                  
