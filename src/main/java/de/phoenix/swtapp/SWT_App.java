@@ -137,11 +137,11 @@ public class SWT_App  {
                         //TODO delete double input
 
                         new TableItem(control, SWT.NONE);
-                        TableItem[] items = control.getItems();
+                        final TableItem[] items = control.getItems();
                         
                         for (int j = 0; j < items.length; j++) {
                             
-                        TableEditor editor= new TableEditor(control);
+                        final TableEditor editor= new TableEditor(control);
                         
                         File f=new File(files[i]);
                         Text filename= new Text(control,SWT.NONE);
@@ -150,15 +150,54 @@ public class SWT_App  {
                         editor.grabVertical= true;
                         editor.setEditor(filename, items[j], 0);
                         editor.layout();
-                       
+            //--------------------------------------------------------------------
                         //A delete button for each object dragged into the table
-                        TableEditor editor2 = new TableEditor(control);
-                        Button closer= new Button(control, SWT.PUSH);
-                        closer.setText("Remove");                    
+                        final TableEditor editor2 = new TableEditor(control);
+                        Button removeB= new Button(control, SWT.PUSH);
+                        removeB.setText("Remove");                    
                         editor2.grabHorizontal=true;
                         editor2.grabVertical= true;
-                        editor2.setEditor(closer, items[j], 1);
+                        
+                        editor2.setEditor(removeB, items[j], 1);
                         editor2.layout();
+                        
+                        //TODO remove row when klicked
+                        removeB.addSelectionListener(new SelectionListener() {
+                            
+                            public void widgetSelected(SelectionEvent e) {
+                                
+                                int count= control.getItemCount();
+                                System.out.println(count);
+                                if(count>0){
+                                    System.out.println("so bin drin, lösche jetzt count-1");
+                                    
+                                    
+                                    editor2.getEditor().dispose();
+                                    editor2.dispose();
+                                    editor.getEditor().dispose();
+                                    editor.dispose();
+                                    control.remove(control.indexOf(items[count-1]));
+                                    control.redraw();
+                                    int co=control.getItemCount();
+                                    System.out.println(co +"thats the truth");
+                                    
+                                }
+                                System.out.println("redraw");
+                                
+                                
+                                
+                             
+                                    
+                            }  
+                                
+                            
+                            
+                            public void widgetDefaultSelected(SelectionEvent e) {
+                                
+                            }
+                        });
+                        
+                        
                         
                   
                         }                      
@@ -166,6 +205,7 @@ public class SWT_App  {
                     }
                 }                  
             }
+            //-----------------------------------------------------------------------
             
             public void dragOver(DropTargetEvent event) {
                 
