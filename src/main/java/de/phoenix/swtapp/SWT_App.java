@@ -85,7 +85,7 @@ public class SWT_App  {
         // Hier noch ein Window Icon einfuegen
 
 
-        //Platzhalter für die Statistik des Users
+        //Platzhalter fr die Statistik des Users
         Button placeHolder= new Button(shell, SWT.PUSH);
         placeHolder.setText("PLACEHOLDER");
         GridData gridData=new GridData();
@@ -169,15 +169,16 @@ public class SWT_App  {
                                 int count= control.getItemCount();
                                 System.out.println(count);
                                 if(count>0){
-                                    System.out.println("so bin drin, lösche jetzt count-1");
+                                    System.out.println("so bin drin, lsche jetzt count-1");
                                     
+                                    
+                                  
+                                    control.remove(control.indexOf(items[count-1]));
                                     
                                     editor2.getEditor().dispose();
                                     editor2.dispose();
                                     editor.getEditor().dispose();
                                     editor.dispose();
-                                    control.remove(control.indexOf(items[count-1]));
-                                    control.remove(control.indexOf(items[count-1]));
                                     control.redraw();
                                     int co=control.getItemCount();
                                     System.out.println(co +"thats the truth");
