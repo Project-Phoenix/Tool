@@ -43,6 +43,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
@@ -82,10 +83,10 @@ public class SWT_App  {
         gridLayout.numColumns=3;
         shell.setLayout(gridLayout);
         
-        // Hier noch ein Window Icon einfuegen
+        //Add little programicon
 
 
-        //Platzhalter fr die Statistik des Users
+        //placeholder for the user statistic
         Button placeHolder= new Button(shell, SWT.PUSH);
         placeHolder.setText("PLACEHOLDER");
         GridData gridData=new GridData();
@@ -130,82 +131,70 @@ public class SWT_App  {
             public void drop(DropTargetEvent event) {
                 
                 if(fileTransfer.isSupportedType(event.currentDataType)){
-                    String[] files=(String[])event.data;
-                    
-                    for (int i = 0; i < files.length; i++) {
+                    final String[] files=(String[]) event.data;
                         
                         //TODO delete double input
 
                         new TableItem(control, SWT.NONE);
                         final TableItem[] items = control.getItems();
                         
-                        for (int j = 0; j < items.length; j++) {
-                            
-                        final TableEditor editor= new TableEditor(control);
                         
-                        File f=new File(files[i]);
-                        Text filename= new Text(control,SWT.NONE);
-                        filename.setText(f.getName());
+                        System.out.println(items.length +"itemslength");      
+                            
+                            File f=new File(files[0]);
+                            Text filename= new Text(control,SWT.NONE);
+                            filename.setText(f.getName());
+                            System.out.println(f.getName()+"name");
+                            
+                        final TableEditor editor= new TableEditor(control);                       
+                        
+                        
                         editor.grabHorizontal=true;
                         editor.grabVertical= true;
-                        editor.setEditor(filename, items[j], 0);
+                        editor.setEditor(filename, items[items.length-1], 0);
                         editor.layout();
             //--------------------------------------------------------------------
                         //A delete button for each object dragged into the table
                         final TableEditor editor2 = new TableEditor(control);
+                        
                         Button removeB= new Button(control, SWT.PUSH);
                         removeB.setText("Remove");                    
                         editor2.grabHorizontal=true;
-                        editor2.grabVertical= true;
-                        
-                        editor2.setEditor(removeB, items[j], 1);
+                        editor2.grabVertical= true;             
+                        editor2.setEditor(removeB, items[items.length-1], 1);
                         editor2.layout();
                         
                         //TODO remove row when klicked
+                        //TODO 
+                        
                         removeB.addSelectionListener(new SelectionListener() {
                             
                             public void widgetSelected(SelectionEvent e) {
-                                
-                                int count= control.getItemCount();
-                                System.out.println(count);
-                                if(count>0){
-                                    System.out.println("so bin drin, lsche jetzt count-1");
-                                    
-                                    
-                                  
-                                    control.remove(control.indexOf(items[count-1]));
-                                    
+
+
+                                int count= control.getItemCount(); 
+                             
+                                    control.remove(control.getSelectionIndex()+1 );
                                     editor2.getEditor().dispose();
                                     editor2.dispose();
+                                         
                                     editor.getEditor().dispose();
                                     editor.dispose();
-                                    control.redraw();
-                                    int co=control.getItemCount();
-                                    System.out.println(co +"thats the truth");
+                                    control.redraw();                                 
                                     
-                                }
-                                System.out.println("redraw");
-                                
-                                
-                                
+//                                }                    
                              
                                     
                             }  
                                 
-                            
-                            
+      
                             public void widgetDefaultSelected(SelectionEvent e) {
                                 
                             }
                         });
-                        
-                        
-                        
-                  
+              
                         }                      
-                        
-                    }
-                }                  
+          
             }
             //-----------------------------------------------------------------------
             
