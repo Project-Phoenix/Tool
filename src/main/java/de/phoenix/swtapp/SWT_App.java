@@ -177,6 +177,7 @@ public class SWT_App  {
                                     editor.getEditor().dispose();
                                     editor.dispose();
                                     control.remove(control.indexOf(items[count-1]));
+                                    control.remove(control.indexOf(items[count-1]));
                                     control.redraw();
                                     int co=control.getItemCount();
                                     System.out.println(co +"thats the truth");
