@@ -18,8 +18,6 @@
 
 package de.phoenix.swtapp;
 
-
-
 import java.io.File;
 
 import org.eclipse.swt.SWT;
@@ -54,9 +52,9 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-public class SWT_App  {
+public class SWT_App {
 
-    public static void main( String[] args) {
+    public static void main(String[] args) {
 
         Display display = new Display();
         Shell shell = new SWT_App().createShell(display);
@@ -74,34 +72,34 @@ public class SWT_App  {
 
     }
 
-
-
-    public Shell createShell(final Display display){
-        //Shell is in the foreground. Better usability for DND
-        final Shell shell= new Shell(display, SWT.ON_TOP| SWT.CLOSE);
+    public Shell createShell(final Display display) {
+        // Shell is in the foreground. Better usability for DND
+        final Shell shell = new Shell(display, SWT.ON_TOP | SWT.CLOSE);
         shell.setText("Phoenix");
         GridLayout gridLayout = new GridLayout();
-        gridLayout.numColumns=3;
+        gridLayout.numColumns = 3;
         shell.setLayout(gridLayout);
 
-        //Add little programicon
+        // Add little programicon
 
+        Image mainicon = new Image(display, this.getClass().getResourceAsStream("/icon_50x50.png"));
+        shell.setImage(mainicon);
 
-        //placeholder for the user statistic
-        Button placeHolder= new Button(shell, SWT.PUSH);
+        // placeholder for the user statistic
+        Button placeHolder = new Button(shell, SWT.PUSH);
         placeHolder.setText("PLACEHOLDER");
-        GridData gridData=new GridData();
-        gridData.horizontalAlignment=GridData.FILL;
-        gridData.verticalAlignment=GridData.FILL;
-        gridData.grabExcessHorizontalSpace=true;
-        gridData.grabExcessVerticalSpace=true;
-        gridData.horizontalSpan=3;
-        gridData.verticalSpan=2;  
-        gridData.verticalIndent=10;
+        GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.verticalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.grabExcessVerticalSpace = true;
+        gridData.horizontalSpan = 3;
+        gridData.verticalSpan = 2;
+        gridData.verticalIndent = 10;
 
         placeHolder.setLayoutData(gridData);
 
-        //DRAG and DROP
+        // DRAG and DROP
 
         final FileTransfer fileTransfer = FileTransfer.getInstance();
         final Table control = new Table(shell, SWT.FILL);
@@ -112,13 +110,12 @@ public class SWT_App  {
         tableColumnLeft.setText("Drag File To This Place");
 
         TableColumn tableColumnRight = new TableColumn(control, SWT.NONE);
-        tableColumnRight.setWidth(100);  
+        tableColumnRight.setWidth(100);
 
+        // edit the right column of the table for buttons, which can delete a
+        // line
 
-        //edit the right column of the table for buttons, which can delete a line
-
-        DropTarget targetShell= new DropTarget(control,  DND.DROP_DEFAULT | DND.DROP_COPY |
-                DND.DROP_LINK | DND.DROP_MOVE);
+        DropTarget targetShell = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_LINK | DND.DROP_MOVE);
 
         targetShell.setTransfer(new Transfer[]{fileTransfer});
 
@@ -130,49 +127,47 @@ public class SWT_App  {
 
             public void drop(DropTargetEvent event) {
 
-                if(fileTransfer.isSupportedType(event.currentDataType)){
-                    final String[] files=(String[]) event.data;
+                if (fileTransfer.isSupportedType(event.currentDataType)) {
+                    final String[] files = (String[]) event.data;
 
-                    new TableItem(control, SWT.NONE);                      
+                    new TableItem(control, SWT.NONE);
                     final TableItem[] items = control.getItems();
 
 //Testing TableItem
-                    System.out.println(items.length +"itemslength");      
+                    System.out.println(items.length + "itemslength");
 
-                    File f=new File(files[0]);
-                    Text filename= new Text(control,SWT.NONE);
+                    File f = new File(files[0]);
+                    Text filename = new Text(control, SWT.NONE);
                     filename.setText(f.getName());
-                    System.out.println(f.getName()+"name");
+                    System.out.println(f.getName() + "name");
 
-                    final TableEditor editor= new TableEditor(control);                       
+                    final TableEditor editor = new TableEditor(control);
 
-                    editor.grabHorizontal=true;
-                    editor.grabVertical= true;
-                    editor.setEditor(filename, items[items.length-1], 0);
+                    editor.grabHorizontal = true;
+                    editor.grabVertical = true;
+                    editor.setEditor(filename, items[items.length - 1], 0);
                     editor.layout();
-                    //--------------------------------------------------------------------
-                    //A delete button for each object dragged into the table
+                    // --------------------------------------------------------------------
+                    // A delete button for each object dragged into the table
                     final TableEditor editor2 = new TableEditor(control);
 
-                    Button removeB= new Button(control, SWT.PUSH);
-                    removeB.setText("Remove");                    
-                    editor2.grabHorizontal=true;
-                    editor2.grabVertical= true;             
-                    editor2.setEditor(removeB, items[items.length-1], 1);
+                    Button removeB = new Button(control, SWT.PUSH);
+                    removeB.setText("Remove");
+                    editor2.grabHorizontal = true;
+                    editor2.grabVertical = true;
+                    editor2.setEditor(removeB, items[items.length - 1], 1);
                     editor2.layout();
                     control.redraw();
 
-                    //TODO remove row when klicked
+                    // TODO remove row when klicked
 
                     removeB.addSelectionListener(new SelectionListener() {
 
-                        //This function has some bugs when deleting row
-                        //-------------------------------------------
+                        // This function has some bugs when deleting row
+                        // -------------------------------------------
                         public void widgetSelected(SelectionEvent e) {
 
-
-                            control.remove(control.getSelectionIndex()+1);
-
+                            control.remove(control.getSelectionIndex() + 1);
 
                             editor.getEditor().dispose();
                             editor2.getEditor().dispose();
@@ -181,18 +176,18 @@ public class SWT_App  {
                             editor2.dispose();
 
                             editor.layout();
-                            editor2.layout();                                                     
-                        }  
+                            editor2.layout();
+                        }
 
                         public void widgetDefaultSelected(SelectionEvent e) {
 
                         }
                     });
 
-                }                  
+                }
 
             }
-            //-----------------------------------------------------------------------
+            // -----------------------------------------------------------------------
 
             public void dragOver(DropTargetEvent event) {
 
@@ -210,66 +205,77 @@ public class SWT_App  {
 
             public void dragEnter(DropTargetEvent event) {
 
-                if(event.detail == DND.DROP_DEFAULT){
-                    if((event.operations & DND.DROP_LINK) !=0)
-                        event.detail=DND.DROP_LINK;
-                    else {event.detail=DND.DROP_NONE;}
+                if (event.detail == DND.DROP_DEFAULT) {
+                    if ((event.operations & DND.DROP_LINK) != 0)
+                        event.detail = DND.DROP_LINK;
+                    else {
+                        event.detail = DND.DROP_NONE;
+                    }
                 }
 
                 for (int i = 0; i < event.dataTypes.length; i++) {
-                    if(fileTransfer.isSupportedType(event.dataTypes[i])){
-                        event.currentDataType= event.dataTypes[i];
-                        if(event.detail != DND.DROP_LINK){
+                    if (fileTransfer.isSupportedType(event.dataTypes[i])) {
+                        event.currentDataType = event.dataTypes[i];
+                        if (event.detail != DND.DROP_LINK) {
                             event.detail = DND.DROP_NONE;
                         }
                         break;
                     }
                 }
-            }    
+            }
 
         });
 
-
-        GridData gridTable= new GridData();
-        gridTable.horizontalSpan=2;
-        gridTable.verticalSpan=5;
-        gridTable.verticalIndent=0;
-        gridTable.heightHint=240;
-        gridTable.widthHint=510;
-        gridTable.horizontalIndent=3;
-        gridTable.grabExcessHorizontalSpace=true;
-        gridTable.grabExcessVerticalSpace=true;
+        GridData gridTable = new GridData();
+        gridTable.horizontalSpan = 2;
+        gridTable.verticalSpan = 5;
+        gridTable.verticalIndent = 0;
+        gridTable.heightHint = 240;
+        gridTable.widthHint = 510;
+        gridTable.horizontalIndent = 3;
+        gridTable.grabExcessHorizontalSpace = true;
+        gridTable.grabExcessVerticalSpace = true;
 
         control.setLayoutData(gridTable);
 
-        //Buttons: Download, Upload, Option, Login
-        GridData grid= new GridData(SWT.FILL);
-        grid.horizontalSpan=1;
-        grid.verticalIndent=10;
-        grid.heightHint=50;
-        grid.widthHint=80;
+        // Buttons: Download, Upload, Option, Login
+        GridData grid = new GridData(SWT.FILL);
+        grid.horizontalSpan = 1;
+        grid.verticalIndent = 10;
+        grid.heightHint = 50;
+        grid.widthHint = 80;
 
         Button downloadButton = new Button(shell, SWT.PUSH);
         downloadButton.setText("Download");
         downloadButton.setLayoutData(grid);
 
-
         Button uploadButton = new Button(shell, SWT.PUSH);
         uploadButton.setText("Upload");
         uploadButton.setLayoutData(grid);
 
+        // uploading items in the DDBox
+        uploadButton.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent e) {
+
+            }
+
+            public void widgetDefaultSelected(SelectionEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+        });
 
         Button optionButton = new Button(shell, SWT.PUSH);
         optionButton.setLayoutData(grid);
         optionButton.setText("Option");
 
-
-        Button loginButton = new Button(shell, SWT.PUSH);       
+        Button loginButton = new Button(shell, SWT.PUSH);
         loginButton.setText("Login");
         loginButton.setLayoutData(grid);
         loginButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                Login loginWindow= new Login(shell, 0);
+                Login loginWindow = new Login(shell, 0);
                 loginWindow.loginShell(display);
 
             }
@@ -281,7 +287,6 @@ public class SWT_App  {
 
         return shell;
     }
-
 
     private static void centerWindow(Shell shell) {
 
