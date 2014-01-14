@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Project-Phoenix
+ * Copyright (C) 2014 Project-Phoenix
  * 
  * This file is part of Tool.
  * 
@@ -18,6 +18,26 @@
 
 package de.phoenix.swtapp;
 
-public class CopyOfUpload {
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.TableItem;
+
+public class SWT_App_RemoveSelectionListener implements SelectionListener {
+
+    public void widgetSelected(SelectionEvent e) {
+        TableItem[] copy= null;
+//        
+//        for (int i = 0; i < length; i++) {
+//            
+//        }
+        
+    }
+
+    public void widgetDefaultSelected(SelectionEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+    
 
 }
