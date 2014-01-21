@@ -44,14 +44,6 @@ import org.eclipse.swt.widgets.Text;
 public class Login extends Composite {
 
 
-
-    //    private LoginHandler  login;
-    //    
-    //    public Login(Shell shell) {
-    //    login = new TabeaLoginHandler();
-    //    
-    //    }
-
     public Login(Composite parent, int style) {
         super(parent, 0);
         // TODO Auto-generated constructor stub
@@ -111,8 +103,6 @@ public class Login extends Composite {
 
             public void widgetSelected(SelectionEvent e) {
                 shell.getShell().close();
-
-
 
             }
 

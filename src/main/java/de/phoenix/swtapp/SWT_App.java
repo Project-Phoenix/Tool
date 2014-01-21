@@ -24,6 +24,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
@@ -53,6 +56,14 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 public class SWT_App {
+    private MyHandler myhandler;
+    
+
+    public SWT_App(){
+        
+       myhandler= new MyHandler();
+       
+    }
 
     public static void main(String[] args) {
 
@@ -99,9 +110,9 @@ public class SWT_App {
 
         placeHolder.setLayoutData(gridData);
 
-        // DRAG and DROP
+        // DROPTarget for the GUI // Transfer to handler class
 
-        final FileTransfer fileTransfer = FileTransfer.getInstance();
+       
         final Table control = new Table(shell, SWT.FILL);
         control.setHeaderVisible(true);
 
@@ -114,8 +125,10 @@ public class SWT_App {
 
         // edit the right column of the table for buttons, which can delete a
         // line
+        
+        final FileTransfer fileTransfer = FileTransfer.getInstance();
 
-        DropTarget targetShell = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_LINK | DND.DROP_MOVE);
+        DropTarget targetShell = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_MOVE);
 
         targetShell.setTransfer(new Transfer[]{fileTransfer});
 
@@ -147,10 +160,11 @@ public class SWT_App {
                     editor.grabVertical = true;
                     editor.setEditor(filename, items[items.length - 1], 0);
                     editor.layout();
+                 
                     // --------------------------------------------------------------------
                     // A delete button for each object dragged into the table
                     final TableEditor editor2 = new TableEditor(control);
-
+                    
                     Button removeB = new Button(control, SWT.PUSH);
                     removeB.setText("Remove");
                     editor2.grabHorizontal = true;
@@ -206,8 +220,8 @@ public class SWT_App {
             public void dragEnter(DropTargetEvent event) {
 
                 if (event.detail == DND.DROP_DEFAULT) {
-                    if ((event.operations & DND.DROP_LINK) != 0)
-                        event.detail = DND.DROP_LINK;
+                    if ((event.operations & DND.DROP_COPY) != 0)
+                        event.detail = DND.DROP_COPY;
                     else {
                         event.detail = DND.DROP_NONE;
                     }
@@ -216,7 +230,7 @@ public class SWT_App {
                 for (int i = 0; i < event.dataTypes.length; i++) {
                     if (fileTransfer.isSupportedType(event.dataTypes[i])) {
                         event.currentDataType = event.dataTypes[i];
-                        if (event.detail != DND.DROP_LINK) {
+                        if (event.detail != DND.DROP_COPY) {
                             event.detail = DND.DROP_NONE;
                         }
                         break;
@@ -225,6 +239,29 @@ public class SWT_App {
             }
 
         });
+        
+        // Setting the Drag and Drop Box as a new Dragsource
+        
+//        DragSource ddbox= new DragSource(control, DND.DROP_TARGET_MOVE | DND.DROP_COPY);
+//        final FileTransfer fileTransferDL = FileTransfer.getInstance();
+//        
+//        ddbox.addDragListener(new DragSourceListener() {
+//            
+//            public void dragStart(DragSourceEvent arg0) {
+//                // TODO Auto-generated method stub
+//                
+//            }
+//            
+//            public void dragSetData(DragSourceEvent event) {
+//                if(fileTransfer.getInstance().isSupportedType(event.dataType));
+//                event.data= control.getData();
+//            }
+//            
+//            public void dragFinished(DragSourceEvent event) {
+//              
+//                
+//            }
+//        });
 
         GridData gridTable = new GridData();
         gridTable.horizontalSpan = 2;
@@ -248,6 +285,19 @@ public class SWT_App {
         Button downloadButton = new Button(shell, SWT.PUSH);
         downloadButton.setText("Download");
         downloadButton.setLayoutData(grid);
+        
+        downloadButton.addSelectionListener(new SelectionListener() {
+            
+            public void widgetSelected(SelectionEvent arg0) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+                // TODO Auto-generated method stub
+                
+            }
+        });
 
         Button uploadButton = new Button(shell, SWT.PUSH);
         uploadButton.setText("Upload");
@@ -275,13 +325,15 @@ public class SWT_App {
         loginButton.setLayoutData(grid);
         loginButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                Login loginWindow = new Login(shell, 0);
-                loginWindow.loginShell(display);
+                
+                myhandler.createloginshell(shell,display);
 
             }
             public void widgetDefaultSelected(SelectionEvent e) {
             }
         });
+        
+        
 
         shell.pack();
 
