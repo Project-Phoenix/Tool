@@ -18,6 +18,9 @@
 
 package de.phoenix.swtapp;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -30,8 +33,9 @@ public class MyHandler {
     }
 
     public void createloginshell(Shell shell, Display display){
-        Login loginWindow = new Login(shell, 0);
-        loginWindow.loginShell(display);
+        Login loginWindow = new Login(shell,0, this);
+        Shell loginshell= new Shell(SWT.ON_TOP | SWT.CLOSE);
+        loginWindow.loginShell(display,loginshell);
        
     }
 
@@ -40,6 +44,7 @@ public class MyHandler {
     public void getUpload(){
 
     }
+    
 
 
 
@@ -47,4 +52,19 @@ public class MyHandler {
 
     }
 
+    public void centerWindow(Shell shell){
+        Rectangle bounds = shell.getDisplay().getBounds();
+
+        Point p = shell.getSize();
+
+        int sWidth = (bounds.width - p.x) / 2;
+        int sHeight = (bounds.height - p.y) / 2;
+
+        shell.setBounds(sWidth, sHeight, p.x, p.y);
+    }
+    
+    public void closeWindow(Shell shell){
+        shell.getShell().close();
+        
+    }
 }

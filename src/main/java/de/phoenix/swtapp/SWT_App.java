@@ -57,23 +57,25 @@ import org.eclipse.swt.widgets.Text;
 
 public class SWT_App {
     private MyHandler myhandler;
-    
+    private static Display display;
+    private static Shell shell;
 
     public SWT_App(){
         
        myhandler= new MyHandler();
+       display = new Display();
+       shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
+       shell = createShell(display, shell);
+       shell.setSize(650, 400);      
+       myhandler.centerWindow(shell);
+
        
     }
 
     public static void main(String[] args) {
-
-        Display display = new Display();
-        Shell shell = new SWT_App().createShell(display);
-        shell.setSize(650, 400);
-        centerWindow(shell);
-
+        SWT_App mainShell= new SWT_App();
+       
         shell.open();
-
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch())
                 display.sleep();
@@ -83,23 +85,27 @@ public class SWT_App {
 
     }
 
-    public Shell createShell(final Display display) {
-        // Shell is in the foreground. Better usability for DND
-        final Shell shell = new Shell(display, SWT.ON_TOP | SWT.CLOSE);
-        shell.setText("Phoenix");
-        GridLayout gridLayout = new GridLayout();
+    public Shell createShell(final Display display, final Shell shell) {
+
+        // MainLayout and Title  
+        
+        GridLayout gridLayout = new GridLayout();    
         gridLayout.numColumns = 3;
+        
+        shell.setText("Phoenix");
         shell.setLayout(gridLayout);
 
-        // Add little programicon
+        // Set Windowicon
 
         Image mainicon = new Image(display, this.getClass().getResourceAsStream("/icon_50x50.png"));
         shell.setImage(mainicon);
 
-        // placeholder for the user statistic
+        // Placeholderbutton for the userstatistic
+        
         Button placeHolder = new Button(shell, SWT.PUSH);
-        placeHolder.setText("PLACEHOLDER");
+        
         GridData gridData = new GridData();
+        
         gridData.horizontalAlignment = GridData.FILL;
         gridData.verticalAlignment = GridData.FILL;
         gridData.grabExcessHorizontalSpace = true;
@@ -108,6 +114,7 @@ public class SWT_App {
         gridData.verticalSpan = 2;
         gridData.verticalIndent = 10;
 
+        placeHolder.setText("PLACEHOLDER");
         placeHolder.setLayoutData(gridData);
 
         // DROPTarget for the GUI // Transfer to handler class
@@ -264,6 +271,7 @@ public class SWT_App {
 //        });
 
         GridData gridTable = new GridData();
+        
         gridTable.horizontalSpan = 2;
         gridTable.verticalSpan = 5;
         gridTable.verticalIndent = 0;
@@ -276,16 +284,16 @@ public class SWT_App {
         control.setLayoutData(gridTable);
 
         // Buttons: Download, Upload, Option, Login
+        
         GridData grid = new GridData(SWT.FILL);
         grid.horizontalSpan = 1;
         grid.verticalIndent = 10;
         grid.heightHint = 50;
         grid.widthHint = 80;
 
-        Button downloadButton = new Button(shell, SWT.PUSH);
+        Button downloadButton = new Button(shell, SWT.PUSH);     
         downloadButton.setText("Download");
-        downloadButton.setLayoutData(grid);
-        
+        downloadButton.setLayoutData(grid);       
         downloadButton.addSelectionListener(new SelectionListener() {
             
             public void widgetSelected(SelectionEvent arg0) {
@@ -327,6 +335,7 @@ public class SWT_App {
             public void widgetSelected(SelectionEvent e) {
                 
                 myhandler.createloginshell(shell,display);
+                
 
             }
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -340,16 +349,4 @@ public class SWT_App {
         return shell;
     }
 
-    private static void centerWindow(Shell shell) {
-
-        Rectangle bounds = shell.getDisplay().getBounds();
-
-        Point p = shell.getSize();
-
-        int sWidth = (bounds.width - p.x) / 2;
-        int sHeight = (bounds.height - p.y) / 2;
-
-        shell.setBounds(sWidth, sHeight, p.x, p.y);
-
-    }
 }

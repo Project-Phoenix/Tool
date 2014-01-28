@@ -42,16 +42,15 @@ import org.eclipse.swt.widgets.Text;
  */
 
 public class Login extends Composite {
+    private MyHandler myhandler;
 
-
-    public Login(Composite parent, int style) {
+    public Login(Composite parent, int style, MyHandler myhandler) {
         super(parent, 0);
-        // TODO Auto-generated constructor stub
+        this.myhandler=myhandler;
+       
     }
 
-    public Shell loginShell(final Display display){
-
-        final Shell shell= new Shell(display, SWT.ON_TOP | SWT.CLOSE);;
+    public Shell loginShell(final Display display, final Shell shell){
 
         Image loginicon = new Image(display, this.getClass().getResourceAsStream("/loginkey_50x50.png"));
         shell.setImage(loginicon);
@@ -61,9 +60,8 @@ public class Login extends Composite {
 
         shell.setLayout(gridlayout);
         shell.setSize(185, 180);
-        centerWindow(shell);
-        //        shell.setParent(SWT_App.openLoginShell(shell));
-        shell.setText("Login");
+        shell.setText("Login");       
+        myhandler.centerWindow(shell);
 
         GridData gridData_fill = new GridData();
         gridData_fill.horizontalAlignment = GridData.FILL;
@@ -92,17 +90,16 @@ public class Login extends Composite {
         Button checkBox_pw= new Button(shell, SWT.CHECK); 
         checkBox_pw.setText("Save Password");
 
-        //Sixth Row           
+        //Sixth Row         
         Button button_login_submit= new Button(shell, SWT.CENTER);   
         button_login_submit.setText("Login");
-
 
         Button button_login_cancel= new Button(shell, SWT.CENTER);
         button_login_cancel.setText("Cancel");        
         button_login_cancel.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-                shell.getShell().close();
+                myhandler.closeWindow(shell);
 
             }
 
@@ -111,27 +108,12 @@ public class Login extends Composite {
             }
         });
 
-
         shell.pack();
         shell.open();
 
-
         return shell;
-
 
     } 
 
-    private static void centerWindow(Shell shell) {
-
-        Rectangle bounds = shell.getDisplay().getBounds();
-
-        Point p = shell.getSize();
-
-        int sWidth = (bounds.width - p.x) / 2;
-        int sHeight = (bounds.height - p.y) / 2;
-
-        shell.setBounds(sWidth, sHeight, p.x, p.y);
-
-    }
 }
 
