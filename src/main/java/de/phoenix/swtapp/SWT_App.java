@@ -59,7 +59,8 @@ public class SWT_App {
     private MyHandler myhandler;
     private static Display display;
     private static Shell shell;
-
+    private int counter;
+    
     public SWT_App(){
         
        myhandler= new MyHandler();
@@ -68,7 +69,6 @@ public class SWT_App {
        shell = createShell(display, shell);
        shell.setSize(650, 400);      
        myhandler.centerWindow(shell);
-
        
     }
 
@@ -149,36 +149,43 @@ public class SWT_App {
 
                 if (fileTransfer.isSupportedType(event.currentDataType)) {
                     final String[] files = (String[]) event.data;
-
-                    new TableItem(control, SWT.NONE);
-                    final TableItem[] items = control.getItems();
-
-//Testing TableItem
-                    System.out.println(items.length + "itemslength");
-
+                    
+                    final Button removeB = new Button(control, SWT.PUSH);
+                    final TableEditor editor = new TableEditor(control);
+                    final TableEditor editor2 = new TableEditor(control);
+                    
                     File f = new File(files[0]);
                     Text filename = new Text(control, SWT.NONE);
                     filename.setText(f.getName());
-                    System.out.println(f.getName() + "name");
+//                    System.out.println(f.getName() + "name");
+                    
+                    myhandler.createTableItem(shell, display, counter, control, filename, removeB, editor, editor2);
+//                    new TableItem(control, SWT.NONE);
+//                    final TableItem[] items = control.getItems();
 
-                    final TableEditor editor = new TableEditor(control);
+//Testing TableItem
+//                    System.out.println(items.length + "itemslength");
+//------------------
+                   
 
-                    editor.grabHorizontal = true;
-                    editor.grabVertical = true;
-                    editor.setEditor(filename, items[items.length - 1], 0);
-                    editor.layout();
+//                    final TableEditor editor = new TableEditor(control);
+//
+//                    editor.grabHorizontal = true;
+//                    editor.grabVertical = true;
+//                    editor.setEditor(filename, items[items.length - 1], 0);
+//                    editor.layout();
                  
                     // --------------------------------------------------------------------
                     // A delete button for each object dragged into the table
-                    final TableEditor editor2 = new TableEditor(control);
+//                    final TableEditor editor2 = new TableEditor(control);
+//                    
                     
-                    Button removeB = new Button(control, SWT.PUSH);
-                    removeB.setText("Remove");
-                    editor2.grabHorizontal = true;
-                    editor2.grabVertical = true;
-                    editor2.setEditor(removeB, items[items.length - 1], 1);
-                    editor2.layout();
-                    control.redraw();
+//                    removeB.setText("Remove");
+//                    editor2.grabHorizontal = true;
+//                    editor2.grabVertical = true;
+//                    editor2.setEditor(removeB, items[items.length - 1], 1);
+//                    editor2.layout();
+//                    control.redraw();
 
                     // TODO remove row when klicked
 
@@ -187,17 +194,18 @@ public class SWT_App {
                         // This function has some bugs when deleting row
                         // -------------------------------------------
                         public void widgetSelected(SelectionEvent e) {
-
-                            control.remove(control.getSelectionIndex() + 1);
-
-                            editor.getEditor().dispose();
-                            editor2.getEditor().dispose();
-
-                            editor.dispose();
-                            editor2.dispose();
-
-                            editor.layout();
-                            editor2.layout();
+                            
+                             myhandler.deleteRow(control, editor, editor2, removeB, counter);
+//                            control.remove(control.getSelectionIndex() + 1);
+//
+//                            editor.getEditor().dispose();
+//                            editor2.getEditor().dispose();
+//
+//                            editor.dispose();
+//                            editor2.dispose();
+//
+//                            editor.layout();
+//                            editor2.layout();
                         }
 
                         public void widgetDefaultSelected(SelectionEvent e) {

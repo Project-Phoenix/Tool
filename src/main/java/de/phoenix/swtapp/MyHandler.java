@@ -18,14 +18,21 @@
 
 package de.phoenix.swtapp;
 
+import java.io.File;
+import java.sql.Array;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 
 public class MyHandler {
-
 
 
     public void getLoginData(){
@@ -39,14 +46,49 @@ public class MyHandler {
        
     }
 
+    public void createTableItem(Shell shell, Display display, int counter, Table control, Text filename, Button removeB, TableEditor editor,TableEditor editor2){
+        
+        //REPARIEREN
+        new TableItem(control, SWT.NONE, counter);
+        final TableItem[] items = control.getItems();
+        System.out.println(control.getItemCount());
+        System.out.println(control.getItem(counter));
+        editor.grabHorizontal = true;
+        editor.grabVertical = true;
+        editor.setEditor(filename, items[counter], 0);
+        editor.layout();
+          
+        removeB.setText("Remove"+counter);
+        editor2.grabHorizontal = true;
+        editor2.grabVertical = true;
+        editor2.setEditor(removeB, items[counter], 1);
+        editor2.layout();
+        control.redraw();
+        
 
+    }
 
+    public void deleteRow(Table control, TableEditor editor, TableEditor editor2, Button removeB, int counter){
+        String a;
+        
+        
+        control.remove(control.getSelectionIndex() + 1);
+
+        editor.getEditor().dispose();
+        editor2.getEditor().dispose();
+
+        editor.dispose();
+        editor2.dispose();
+
+        editor.layout();
+        editor2.layout();
+        counter--;
+        
+    }
     public void getUpload(){
 
     }
     
-
-
 
     public void getDownloadData(){
 

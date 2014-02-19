@@ -26,11 +26,7 @@ import org.eclipse.swt.widgets.TableItem;
 public class SWT_App_RemoveSelectionListener implements SelectionListener {
 
     public void widgetSelected(SelectionEvent e) {
-        TableItem[] copy= null;
-//        
-//        for (int i = 0; i < length; i++) {
-//            
-//        }
+        
         
     }
 
