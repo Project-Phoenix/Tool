@@ -47,8 +47,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -59,7 +61,7 @@ public class SWT_App {
     private MyHandler myhandler;
     private static Display display;
     private static Shell shell;
-    private int counter;
+    private int counter=0;
     
     public SWT_App(){
         
@@ -127,9 +129,10 @@ public class SWT_App {
         tableColumnLeft.setWidth(427);
         tableColumnLeft.setText("Drag File To This Place");
 
-        TableColumn tableColumnRight = new TableColumn(control, SWT.NONE);
+        final TableColumn tableColumnRight = new TableColumn(control, SWT.NONE);
         tableColumnRight.setWidth(100);
-
+        
+        
         // edit the right column of the table for buttons, which can delete a
         // line
         
@@ -148,76 +151,42 @@ public class SWT_App {
             public void drop(DropTargetEvent event) {
 
                 if (fileTransfer.isSupportedType(event.currentDataType)) {
+                    
                     final String[] files = (String[]) event.data;
                     
                     final Button removeB = new Button(control, SWT.PUSH);
-                    final TableEditor editor = new TableEditor(control);
-                    final TableEditor editor2 = new TableEditor(control);
-                    
+                    final TableEditor editor = new TableEditor(control);                    
+                    final TableItem item= new TableItem(control, SWT.BORDER_SOLID,counter);
+                    final TableItem[] items = control.getItems();
+                             
                     File f = new File(files[0]);
-                    Text filename = new Text(control, SWT.NONE);
-                    filename.setText(f.getName());
-//                    System.out.println(f.getName() + "name");
-                    
-                    myhandler.createTableItem(shell, display, counter, control, filename, removeB, editor, editor2);
-//                    new TableItem(control, SWT.NONE);
-//                    final TableItem[] items = control.getItems();
+                    item.setText(f.getName());
+                    removeB.setData(item);
+                  
+                    myhandler.createTableItem(counter, control, item, removeB, items, editor);
+ 
+                    counter++;
 
-//Testing TableItem
-//                    System.out.println(items.length + "itemslength");
-//------------------
-                   
-
-//                    final TableEditor editor = new TableEditor(control);
-//
-//                    editor.grabHorizontal = true;
-//                    editor.grabVertical = true;
-//                    editor.setEditor(filename, items[items.length - 1], 0);
-//                    editor.layout();
-                 
-                    // --------------------------------------------------------------------
-                    // A delete button for each object dragged into the table
-//                    final TableEditor editor2 = new TableEditor(control);
-//                    
-                    
-//                    removeB.setText("Remove");
-//                    editor2.grabHorizontal = true;
-//                    editor2.grabVertical = true;
-//                    editor2.setEditor(removeB, items[items.length - 1], 1);
-//                    editor2.layout();
-//                    control.redraw();
 
                     // TODO remove row when klicked
-
                     removeB.addSelectionListener(new SelectionListener() {
-
-                        // This function has some bugs when deleting row
-                        // -------------------------------------------
-                        public void widgetSelected(SelectionEvent e) {
-                            
-                             myhandler.deleteRow(control, editor, editor2, removeB, counter);
-//                            control.remove(control.getSelectionIndex() + 1);
-//
-//                            editor.getEditor().dispose();
-//                            editor2.getEditor().dispose();
-//
-//                            editor.dispose();
-//                            editor2.dispose();
-//
-//                            editor.layout();
-//                            editor2.layout();
+                        
+                        public void widgetSelected(SelectionEvent arg0) {
+                            myhandler.deleteRow(control, editor, removeB,item);
+                         
+                            counter--;
+                      
                         }
-
-                        public void widgetDefaultSelected(SelectionEvent e) {
-
+                        
+                        public void widgetDefaultSelected(SelectionEvent arg0) {
+                            // TODO Auto-generated method stub
+                            
                         }
                     });
-
-                }
-
-            }
-            // -----------------------------------------------------------------------
-
+                }}
+                                  
+            
+      
             public void dragOver(DropTargetEvent event) {
 
                 event.feedback = DND.FEEDBACK_SELECT | DND.FEEDBACK_SCROLL;

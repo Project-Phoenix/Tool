@@ -27,8 +27,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
@@ -46,43 +48,29 @@ public class MyHandler {
        
     }
 
-    public void createTableItem(Shell shell, Display display, int counter, Table control, Text filename, Button removeB, TableEditor editor,TableEditor editor2){
+    public void createTableItem(int counter, Table control, Item item , Button removeB, TableItem[] items, TableEditor editor){
         
-        //REPARIEREN
-        new TableItem(control, SWT.NONE, counter);
-        final TableItem[] items = control.getItems();
-        System.out.println(control.getItemCount());
-        System.out.println(control.getItem(counter));
+
+        
+        removeB.setText("remove");
         editor.grabHorizontal = true;
         editor.grabVertical = true;
-        editor.setEditor(filename, items[counter], 0);
+        editor.setEditor(removeB, items[counter], 1);
         editor.layout();
-          
-        removeB.setText("Remove"+counter);
-        editor2.grabHorizontal = true;
-        editor2.grabVertical = true;
-        editor2.setEditor(removeB, items[counter], 1);
-        editor2.layout();
-        control.redraw();
-        
 
+        control.redraw();
     }
 
-    public void deleteRow(Table control, TableEditor editor, TableEditor editor2, Button removeB, int counter){
-        String a;
-        
-        
-        control.remove(control.getSelectionIndex() + 1);
+    public void deleteRow(Table control, TableEditor editor, Button removeB, TableItem item){
 
         editor.getEditor().dispose();
-        editor2.getEditor().dispose();
-
         editor.dispose();
-        editor2.dispose();
-
-        editor.layout();
-        editor2.layout();
-        counter--;
+        item.dispose();
+        
+//        editor.layout();
+//
+//        control.layout();
+//        
         
     }
     public void getUpload(){
