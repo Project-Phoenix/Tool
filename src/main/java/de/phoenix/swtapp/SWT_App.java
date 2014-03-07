@@ -61,7 +61,6 @@ public class SWT_App {
     private MyHandler myhandler;
     private static Display display;
     private static Shell shell;
-    private int counter=0;
     
     public SWT_App(){
         
@@ -89,7 +88,7 @@ public class SWT_App {
 
     public Shell createShell(final Display display, final Shell shell) {
 
-        // MainLayout and Title  
+        // mainLayout and title  
         
         GridLayout gridLayout = new GridLayout();    
         gridLayout.numColumns = 3;
@@ -97,12 +96,12 @@ public class SWT_App {
         shell.setText("Phoenix");
         shell.setLayout(gridLayout);
 
-        // Set Windowicon
+        // set windowicon
 
         Image mainicon = new Image(display, this.getClass().getResourceAsStream("/icon_50x50.png"));
         shell.setImage(mainicon);
 
-        // Placeholderbutton for the userstatistic
+        // placeholderbutton for the userstatistic
         
         Button placeHolder = new Button(shell, SWT.PUSH);
         
@@ -118,13 +117,14 @@ public class SWT_App {
 
         placeHolder.setText("PLACEHOLDER");
         placeHolder.setLayoutData(gridData);
+        
 
-        // DROPTarget for the GUI // Transfer to handler class
-
-       
+        // DROPtarget for the GUI
+    
         final Table control = new Table(shell, SWT.FILL);
         control.setHeaderVisible(true);
 
+        control.setLinesVisible(true);
         final TableColumn tableColumnLeft = new TableColumn(control, SWT.NONE);
         tableColumnLeft.setWidth(427);
         tableColumnLeft.setText("Drag File To This Place");
@@ -133,15 +133,12 @@ public class SWT_App {
         tableColumnRight.setWidth(100);
         
         
-        // edit the right column of the table for buttons, which can delete a
-        // line
-        
         final FileTransfer fileTransfer = FileTransfer.getInstance();
 
         DropTarget targetShell = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_MOVE);
 
         targetShell.setTransfer(new Transfer[]{fileTransfer});
-
+        
         targetShell.addDropListener(new DropTargetListener() {
 
             public void dropAccept(DropTargetEvent event) {
@@ -155,27 +152,23 @@ public class SWT_App {
                     final String[] files = (String[]) event.data;
                     
                     final Button removeB = new Button(control, SWT.PUSH);
-                    final TableEditor editor = new TableEditor(control);                    
-                    final TableItem item= new TableItem(control, SWT.BORDER_SOLID,counter);
+                    final TableEditor editor = new TableEditor(control); 
+                    
+                    final TableItem item= new TableItem(control, SWT.NONE);    
                     final TableItem[] items = control.getItems();
                              
                     File f = new File(files[0]);
                     item.setText(f.getName());
                     removeB.setData(item);
-                  
-                    myhandler.createTableItem(counter, control, item, removeB, items, editor);
- 
-                    counter++;
+                                      
+                    myhandler.createTableItem(control, item, removeB, items, editor);
 
-
-                    // TODO remove row when klicked
+                    // remove row when button klicked
                     removeB.addSelectionListener(new SelectionListener() {
-                        
+           
                         public void widgetSelected(SelectionEvent arg0) {
-                            myhandler.deleteRow(control, editor, removeB,item);
-                         
-                            counter--;
-                      
+                            myhandler.deleteRow(control, editor, removeB,item,items);
+                                                              
                         }
                         
                         public void widgetDefaultSelected(SelectionEvent arg0) {
@@ -224,6 +217,7 @@ public class SWT_App {
 
         });
         
+        //TODO
         // Setting the Drag and Drop Box as a new Dragsource
         
 //        DragSource ddbox= new DragSource(control, DND.DROP_TARGET_MOVE | DND.DROP_COPY);
@@ -260,7 +254,7 @@ public class SWT_App {
 
         control.setLayoutData(gridTable);
 
-        // Buttons: Download, Upload, Option, Login
+        // buttons: download, upload, option, login
         
         GridData grid = new GridData(SWT.FILL);
         grid.horizontalSpan = 1;
@@ -288,7 +282,7 @@ public class SWT_App {
         uploadButton.setText("Upload");
         uploadButton.setLayoutData(grid);
 
-        // uploading items in the DDBox
+        // uploading items in the DDbox
         uploadButton.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
@@ -320,9 +314,9 @@ public class SWT_App {
         });
         
         
-
+        
         shell.pack();
-
+        
         return shell;
     }
 

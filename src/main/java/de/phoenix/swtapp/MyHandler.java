@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -48,31 +49,25 @@ public class MyHandler {
        
     }
 
-    public void createTableItem(int counter, Table control, Item item , Button removeB, TableItem[] items, TableEditor editor){
-        
-
-        
+    public void createTableItem(Table control, Item item , Button removeB, TableItem[] items, TableEditor editor){
+           
         removeB.setText("remove");
         editor.grabHorizontal = true;
         editor.grabVertical = true;
-        editor.setEditor(removeB, items[counter], 1);
-        editor.layout();
-
-        control.redraw();
+        editor.setEditor(removeB, items[items.length-1], 1);
     }
+  
+    public void deleteRow(Table control, TableEditor editor, Button removeB, TableItem item, TableItem[] items){
 
-    public void deleteRow(Table control, TableEditor editor, Button removeB, TableItem item){
-
+        removeB.dispose();
         editor.getEditor().dispose();
+        editor.getItem().dispose();      
         editor.dispose();
-        item.dispose();
-        
-//        editor.layout();
-//
-//        control.layout();
-//        
-        
+        control.getColumn(1).pack();
+        control.getColumn(1).setWidth(100);
+
     }
+    
     public void getUpload(){
 
     }
