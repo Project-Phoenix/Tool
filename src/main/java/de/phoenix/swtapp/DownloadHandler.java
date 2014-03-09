@@ -22,9 +22,8 @@ public abstract class DownloadHandler {
 
     public abstract void download();
 
-    public void getDownloadData(){
+    public void getDownloadData() {
 
     }
-
 
 }

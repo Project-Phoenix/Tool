@@ -23,7 +23,7 @@ public abstract class LoginHandler {
 
     public void getLoginData() {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
 }

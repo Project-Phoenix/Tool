@@ -42,6 +42,11 @@ public class MyHandler {
 
     }
 
+    public void creatdownloadshell(Shell shell, Display display) {
+        Download downloadWindow= new Download(shell, 0, this);
+        Shell downloadShell= new Shell(SWT.ON_TOP | SWT.CLOSE);
+        downloadWindow.downloadShell(display, downloadShell);
+    }
     public void createTableItem(Table control, Item item, Button removeB, TableItem[] items, TableEditor editor) {
 
         removeB.setText("remove");

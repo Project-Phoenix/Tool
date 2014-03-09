@@ -249,7 +249,7 @@ public class SWT_App {
         downloadButton.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent arg0) {
-                // TODO Auto-generated method stub
+                myhandler.creatdownloadshell(shell, display);
 
             }
 
