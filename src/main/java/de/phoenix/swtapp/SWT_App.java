@@ -22,11 +22,7 @@ import java.io.File;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
@@ -36,46 +32,34 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.internal.win32.OS;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 
 public class SWT_App {
     private MyHandler myhandler;
     private static Display display;
     private static Shell shell;
-    
-    public SWT_App(){
-        
-       myhandler= new MyHandler();
-       display = new Display();
-       shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
-       shell = createShell(display, shell);
-       shell.setSize(650, 400);      
-       myhandler.centerWindow(shell);
-       
+
+    public SWT_App() {
+
+        myhandler = new MyHandler();
+        display = new Display();
+        shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
+        shell = createShell(display, shell);
+        shell.setSize(650, 400);
+        myhandler.centerWindow(shell);
+
     }
 
     public static void main(String[] args) {
-        SWT_App mainShell= new SWT_App();
-       
+        new SWT_App();
+
         shell.open();
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch())
@@ -88,11 +72,11 @@ public class SWT_App {
 
     public Shell createShell(final Display display, final Shell shell) {
 
-        // mainLayout and title  
-        
-        GridLayout gridLayout = new GridLayout();    
+        // mainLayout and title
+
+        GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 3;
-        
+
         shell.setText("Phoenix");
         shell.setLayout(gridLayout);
 
@@ -102,11 +86,11 @@ public class SWT_App {
         shell.setImage(mainicon);
 
         // placeholderbutton for the userstatistic
-        
+
         Button placeHolder = new Button(shell, SWT.PUSH);
-        
+
         GridData gridData = new GridData();
-        
+
         gridData.horizontalAlignment = GridData.FILL;
         gridData.verticalAlignment = GridData.FILL;
         gridData.grabExcessHorizontalSpace = true;
@@ -117,10 +101,9 @@ public class SWT_App {
 
         placeHolder.setText("PLACEHOLDER");
         placeHolder.setLayoutData(gridData);
-        
 
         // DROPtarget for the GUI
-    
+
         final Table control = new Table(shell, SWT.FILL);
         control.setHeaderVisible(true);
 
@@ -131,14 +114,13 @@ public class SWT_App {
 
         final TableColumn tableColumnRight = new TableColumn(control, SWT.NONE);
         tableColumnRight.setWidth(100);
-        
-        
+
         final FileTransfer fileTransfer = FileTransfer.getInstance();
 
         DropTarget targetShell = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_MOVE);
 
         targetShell.setTransfer(new Transfer[]{fileTransfer});
-        
+
         targetShell.addDropListener(new DropTargetListener() {
 
             public void dropAccept(DropTargetEvent event) {
@@ -148,38 +130,37 @@ public class SWT_App {
             public void drop(DropTargetEvent event) {
 
                 if (fileTransfer.isSupportedType(event.currentDataType)) {
-                    
+
                     final String[] files = (String[]) event.data;
-                    
+
                     final Button removeB = new Button(control, SWT.PUSH);
-                    final TableEditor editor = new TableEditor(control); 
-                    
-                    final TableItem item= new TableItem(control, SWT.NONE);    
+                    final TableEditor editor = new TableEditor(control);
+
+                    final TableItem item = new TableItem(control, SWT.NONE);
                     final TableItem[] items = control.getItems();
-                             
+
                     File f = new File(files[0]);
                     item.setText(f.getName());
                     removeB.setData(item);
-                                      
+
                     myhandler.createTableItem(control, item, removeB, items, editor);
 
                     // remove row when button klicked
                     removeB.addSelectionListener(new SelectionListener() {
-           
+
                         public void widgetSelected(SelectionEvent arg0) {
-                            myhandler.deleteRow(control, editor, removeB,item,items);
-                                                              
+                            myhandler.deleteRow(control, editor, removeB, item, items);
+
                         }
-                        
+
                         public void widgetDefaultSelected(SelectionEvent arg0) {
                             // TODO Auto-generated method stub
-                            
+
                         }
                     });
-                }}
-                                  
-            
-      
+                }
+            }
+
             public void dragOver(DropTargetEvent event) {
 
                 event.feedback = DND.FEEDBACK_SELECT | DND.FEEDBACK_SCROLL;
@@ -216,10 +197,10 @@ public class SWT_App {
             }
 
         });
-        
-        //TODO
+
+        // TODO
         // Setting the Drag and Drop Box as a new Dragsource
-        
+
 //        DragSource ddbox= new DragSource(control, DND.DROP_TARGET_MOVE | DND.DROP_COPY);
 //        final FileTransfer fileTransferDL = FileTransfer.getInstance();
 //        
@@ -242,7 +223,7 @@ public class SWT_App {
 //        });
 
         GridData gridTable = new GridData();
-        
+
         gridTable.horizontalSpan = 2;
         gridTable.verticalSpan = 5;
         gridTable.verticalIndent = 0;
@@ -255,26 +236,26 @@ public class SWT_App {
         control.setLayoutData(gridTable);
 
         // buttons: download, upload, option, login
-        
+
         GridData grid = new GridData(SWT.FILL);
         grid.horizontalSpan = 1;
         grid.verticalIndent = 10;
         grid.heightHint = 50;
         grid.widthHint = 80;
 
-        Button downloadButton = new Button(shell, SWT.PUSH);     
+        Button downloadButton = new Button(shell, SWT.PUSH);
         downloadButton.setText("Download");
-        downloadButton.setLayoutData(grid);       
+        downloadButton.setLayoutData(grid);
         downloadButton.addSelectionListener(new SelectionListener() {
-            
+
             public void widgetSelected(SelectionEvent arg0) {
                 // TODO Auto-generated method stub
-                
+
             }
-            
+
             public void widgetDefaultSelected(SelectionEvent arg0) {
                 // TODO Auto-generated method stub
-                
+
             }
         });
 
@@ -304,19 +285,16 @@ public class SWT_App {
         loginButton.setLayoutData(grid);
         loginButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                
-                myhandler.createloginshell(shell,display);
-                
+
+                myhandler.createloginshell(shell, display);
 
             }
             public void widgetDefaultSelected(SelectionEvent e) {
             }
         });
-        
-        
-        
+
         shell.pack();
-        
+
         return shell;
     }
 

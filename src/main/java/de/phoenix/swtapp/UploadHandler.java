@@ -19,11 +19,11 @@
 package de.phoenix.swtapp;
 
 public abstract class UploadHandler {
-    
+
     public abstract void upload();
-    
-    public void getUpload(){
-        
+
+    public void getUpload() {
+
     }
 
 }

@@ -18,66 +18,59 @@
 
 package de.phoenix.swtapp;
 
-import java.io.File;
-import java.sql.Array;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 
 public class MyHandler {
 
-
-    public void getLoginData(){
+    public void getLoginData() {
 
     }
 
-    public void createloginshell(Shell shell, Display display){
-        Login loginWindow = new Login(shell,0, this);
-        Shell loginshell= new Shell(SWT.ON_TOP | SWT.CLOSE);
-        loginWindow.loginShell(display,loginshell);
-       
+    public void createloginshell(Shell shell, Display display) {
+        Login loginWindow = new Login(shell, 0, this);
+        Shell loginshell = new Shell(SWT.ON_TOP | SWT.CLOSE);
+        loginWindow.loginShell(display, loginshell);
+
     }
 
-    public void createTableItem(Table control, Item item , Button removeB, TableItem[] items, TableEditor editor){
-           
+    public void createTableItem(Table control, Item item, Button removeB, TableItem[] items, TableEditor editor) {
+
         removeB.setText("remove");
         editor.grabHorizontal = true;
         editor.grabVertical = true;
-        editor.setEditor(removeB, items[items.length-1], 1);
+        editor.setEditor(removeB, items[items.length - 1], 1);
     }
-  
-    public void deleteRow(Table control, TableEditor editor, Button removeB, TableItem item, TableItem[] items){
+
+    public void deleteRow(Table control, TableEditor editor, Button removeB, TableItem item, TableItem[] items) {
 
         removeB.dispose();
         editor.getEditor().dispose();
-        editor.getItem().dispose();      
+        editor.getItem().dispose();
         editor.dispose();
+        // refreshing right column
         control.getColumn(1).pack();
         control.getColumn(1).setWidth(100);
 
     }
-    
-    public void getUpload(){
 
-    }
-    
-
-    public void getDownloadData(){
+    public void getUpload() {
 
     }
 
-    public void centerWindow(Shell shell){
+    public void getDownloadData() {
+
+    }
+
+    public void centerWindow(Shell shell) {
         Rectangle bounds = shell.getDisplay().getBounds();
 
         Point p = shell.getSize();
@@ -87,9 +80,9 @@ public class MyHandler {
 
         shell.setBounds(sWidth, sHeight, p.x, p.y);
     }
-    
-    public void closeWindow(Shell shell){
+
+    public void closeWindow(Shell shell) {
         shell.getShell().close();
-        
+
     }
 }
