@@ -24,11 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -67,25 +63,24 @@ public class Download extends Composite {
         Image ts = new Image(display, this.getClass().getResourceAsStream("/tasksheet.png"));
         Image neg = new Image(display, this.getClass().getResourceAsStream("/nichtabgegeben.png"));
         Image abg = new Image(display, this.getClass().getResourceAsStream("/abgegeben.png"));
-        
-        
+
         for (int i = 0; i < 3; i++) {
 
             TreeItem parent = new TreeItem(tree, SWT.CHECK);
-            parent.setText("Tasksheet_" + (i+1));
+            parent.setText("Tasksheet_" + (i + 1));
 
             parent.setImage(ts);
 
             for (int j = 0; j < 5; j++) {
                 TreeItem subitem = new TreeItem(parent, SWT.CHECK);
-                subitem.setText("Task_" + (j+1));
-                if ((j*i + 1) % 3 >= 1) {
+                subitem.setText("Task_" + (j + 1));
+                if ((j * i + 1) % 3 >= 1) {
                     subitem.setImage(abg);
 
-                } else subitem.setImage(neg);
+                } else
+                    subitem.setImage(neg);
             }
         }
-
 
         shell.pack();
         shell.open();

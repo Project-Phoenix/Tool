@@ -1,4 +1,5 @@
 package de.phoenix.swtapp;
+
 /*
  * Copyright (C) 2013 Project-Phoenix
  * 
@@ -19,11 +20,13 @@ package de.phoenix.swtapp;
 
 public abstract class LoginHandler {
 
+    
     public abstract void login();
 
     public void getLoginData() {
         // TODO Auto-generated method stub
 
     }
+ 
 
 }

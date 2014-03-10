@@ -30,26 +30,31 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 public class MyHandler {
+    private LoginHandler loginhandler;
+    
+    public MyHandler() {
+        this.loginhandler=loginhandler;
+    }
 
     public void getLoginData() {
 
     }
 
     public void createloginshell(Shell shell, Display display) {
-        Login loginWindow = new Login(shell, 0, this);
+        Login loginWindow = new Login(shell, 0, this, loginhandler);
         Shell loginshell = new Shell(SWT.ON_TOP | SWT.CLOSE);
         loginWindow.loginShell(display, loginshell);
 
     }
 
     public void creatdownloadshell(Shell shell, Display display) {
-        Download downloadWindow= new Download(shell, 0, this);
-        Shell downloadShell= new Shell(SWT.ON_TOP | SWT.CLOSE);
+        Download downloadWindow = new Download(shell, 0, this);
+        Shell downloadShell = new Shell(SWT.ON_TOP | SWT.CLOSE);
         downloadWindow.downloadShell(display, downloadShell);
     }
     public void createTableItem(Table control, Item item, Button removeB, TableItem[] items, TableEditor editor) {
 
-        removeB.setText("remove");
+        removeB.setText("Remove");
         editor.grabHorizontal = true;
         editor.grabVertical = true;
         editor.setEditor(removeB, items[items.length - 1], 1);
@@ -90,4 +95,8 @@ public class MyHandler {
         shell.getShell().close();
 
     }
+  
+  
+
+    
 }
