@@ -72,7 +72,21 @@ public class SWT_App {
 
     public Shell createShell(final Display display, final Shell shell) {
 
-        // mainLayout and title
+        // Constructing a new shell for the main window
+        //
+        // -----------------------------------------------
+        // |            Userstatistic                    |
+        // |---------------------------------------------|
+        // |                                             |
+        // |---------------------------------------------|
+        // |                               |Download     |
+        // |                               |-------------|
+        // |                               |Upload       |
+        // |              DNDBox           |-------------|
+        // |                               |Option       |
+        // |                               |-------------|
+        // |                               |Login        |
+        // |-------------------------------|-------------|
 
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 3;
@@ -80,17 +94,14 @@ public class SWT_App {
         shell.setText("Phoenix");
         shell.setLayout(gridLayout);
 
-        // set windowicon
-
+        // Setting our teamlogo as icon
         Image mainicon = new Image(display, this.getClass().getResourceAsStream("/icon_50x50.png"));
         shell.setImage(mainicon);
 
-        // placeholderbutton for the userstatistic
-
+        // Placeholderbutton for the userstatistic
         Button placeHolder = new Button(shell, SWT.PUSH);
 
         GridData gridData = new GridData();
-
         gridData.horizontalAlignment = GridData.FILL;
         gridData.verticalAlignment = GridData.FILL;
         gridData.grabExcessHorizontalSpace = true;
@@ -103,11 +114,14 @@ public class SWT_App {
         placeHolder.setLayoutData(gridData);
 
         // DROPtarget for the GUI
-
         final Table control = new Table(shell, SWT.FILL);
         control.setHeaderVisible(true);
-
         control.setLinesVisible(true);
+
+        // Dividing the table into two columns. On the left part the table
+        // "control" contains the dropped filenames. On the right part the
+        // related button, which will delete on click the row in the table (or
+        // tableitem)
         final TableColumn tableColumnLeft = new TableColumn(control, SWT.NONE);
         tableColumnLeft.setWidth(427);
         tableColumnLeft.setText("Drag File To This Place");
@@ -145,7 +159,7 @@ public class SWT_App {
 
                     myhandler.createTableItem(control, item, removeB, items, editor);
 
-                    // remove row when button klicked
+                    // Remove row when button klicked
                     removeB.addSelectionListener(new SelectionListener() {
 
                         public void widgetSelected(SelectionEvent arg0) {
@@ -235,8 +249,7 @@ public class SWT_App {
 
         control.setLayoutData(gridTable);
 
-        // buttons: download, upload, option, login
-
+        // Buttons: download, upload, option, login
         GridData grid = new GridData(SWT.FILL);
         grid.horizontalSpan = 1;
         grid.verticalIndent = 10;
@@ -262,8 +275,6 @@ public class SWT_App {
         Button uploadButton = new Button(shell, SWT.PUSH);
         uploadButton.setText("Upload");
         uploadButton.setLayoutData(grid);
-
-        // uploading items in the DDbox
         uploadButton.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {

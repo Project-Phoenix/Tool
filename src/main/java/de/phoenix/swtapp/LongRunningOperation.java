@@ -29,7 +29,7 @@ public class LongRunningOperation extends Thread {
     private ProgressBar loadbar;
     private Button button_login_submit;
     private Label messageAns;
-    private Boolean isactive;
+    private Boolean isactive=true;
    
 
     public LongRunningOperation(Display display, ProgressBar loadbar, Button button_login_submit, Label messageAns) {
@@ -41,8 +41,13 @@ public class LongRunningOperation extends Thread {
     }
 
     public void run() {
+        System.out.println("starting new thread");
         for (int i = 0; i <= 100; i++) {
-            if(!isactive) return;
+            
+           if(!this.isactive){
+//               System.out.println("closing thread");
+               return;
+           }
             
             try {
                 Thread.sleep(100);
@@ -75,8 +80,9 @@ public class LongRunningOperation extends Thread {
     
     public void kthread(){
         
+        System.out.println(isactive);
         this.isactive=false;
-    
+        System.err.println(isactive);
     }
     
 

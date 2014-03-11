@@ -40,6 +40,19 @@ public class Download extends Composite {
 
     public Shell downloadShell(final Display display, final Shell shell) {
 
+        // Constructing a new shell for the download window
+        //
+        // ---------------
+        // | 1.Tasksheet |
+        // | ----- Task1 |
+        // | ----- Task2 |
+        // | ----- Task3 |
+        // | ----- Task4 |
+        // | 2.Tasksheet |
+        // | ----- Task1 |
+        // | ----- Task2 |
+        // |-------------|
+
         Image downloadicon = new Image(display, this.getClass().getResourceAsStream("/downloadicon_50x50.png"));
         shell.setImage(downloadicon);
 
@@ -53,6 +66,9 @@ public class Download extends Composite {
         GridData gridData_fill = new GridData();
         gridData_fill.horizontalAlignment = GridData.FILL;
         gridData_fill.horizontalSpan = 2;
+
+        // Setting the visualized tree of the data, which the user can select
+        // and download
 
         final Tree tree = new Tree(shell, SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL);
 

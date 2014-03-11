@@ -42,7 +42,6 @@ public class Login extends Composite {
     private MyHandler myhandler;
     private LoginHandler loginhandler;
     private LongRunningOperation thread;
-    private Boolean ithread;
 
     public Login(Composite parent, int style, MyHandler myhandler, LoginHandler loginhandler) {
         super(parent, 0);
@@ -52,6 +51,30 @@ public class Login extends Composite {
     }
 
     public Shell loginShell(final Display display, final Shell shell) {
+
+        // Constructing a new shell for the login window
+        // Sketch: GridLayout with 3 columns.
+        // -----------------------------------------------
+        // |     Label      |            Label           |
+        // |---------------------------------------------|
+        // |                Progressbar                  |
+        // |---------------------------------------------|
+        // |                Label Username               |
+        // |---------------------------------------------|
+        // |                Text Username                |
+        // |---------------------------------------------|
+        // |                Label Password               |
+        // |---------------------------------------------|
+        // |                Text Password                |
+        // |---------------------------------------------|
+        // |                Button Checkbox              |
+        // |---------------------------------------------|
+        // |                                             |
+        // |                Button Login                 |
+        // |---------------------------------------------|
+        // |                                             |
+        // |                Button Cancel                |
+        // ----------------------------------------------|
 
         Image loginicon = new Image(display, this.getClass().getResourceAsStream("/loginkey_50x50.png"));
         shell.setImage(loginicon);
@@ -119,18 +142,22 @@ public class Login extends Composite {
         checkBox_pw.setText("Save Password");
         checkBox_pw.setLayoutData(gridDataS3);
 
+        // After clicking on the login button the user will get feedback with a
+        // progressbar
         final Button button_login_submit = new Button(shell, SWT.NULL);
         button_login_submit.setText("Login");
         button_login_submit.setLayoutData(gridDataButton);
         button_login_submit.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-     
+
                 loadbar.setSelection(0);
+                // To visualize the progressbar a new thread must be started.
+                // The boolean is needed for killing this new thread
                 button_login_submit.setEnabled(false);
                 thread = new LongRunningOperation(display, loadbar, button_login_submit, messageAns);
                 thread.start();
-                
+
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -141,15 +168,16 @@ public class Login extends Composite {
 
         Button button_login_cancel = new Button(shell, SWT.NULL);
         button_login_cancel.setText("Cancel");
-
         button_login_cancel.setLayoutData(gridDataButton);
         button_login_cancel.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-                System.out.println(ithread.toString());
+
+                // After clicking on the cancel button the thread will be
+                // immediately interrupted. This is realized with a boolean,
+                // which will change it state.
                 thread.kthread();
                 myhandler.closeWindow(shell);
-
 
             }
 
