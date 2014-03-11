@@ -19,6 +19,7 @@
 package de.phoenix.swtapp;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -36,13 +37,22 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import sun.security.krb5.Config;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+import de.phoenix.util.Configuration;
+import de.phoenix.util.JSONConfiguration;
+
 public class SWT_App {
-    private MyHandler myhandler;
+    private static MyHandler myhandler;
     private static Display display;
     private static Shell shell;
 
@@ -50,15 +60,45 @@ public class SWT_App {
 
         myhandler = new MyHandler();
         display = new Display();
+        System.out.println("asdawf");
         shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
         shell = createShell(display, shell);
         shell.setSize(650, 400);
         myhandler.centerWindow(shell);
+        
 
     }
 
     public static void main(String[] args) {
         new SWT_App();
+        try {
+            Configuration config = new JSONConfiguration("config.json");
+            if(!config.exists("downloadpath")){    
+                System.out.println("12241321234");
+              
+               
+                MessageBox message= new MessageBox(shell, SWT.ICON_QUESTION|SWT.YES);
+                message.setMessage("It seems to be your first start. Please enter where you want to save your files");
+                message.open();
+                //TODO: ERROR occurs here. Invalid thread access. Pls FIX it
+//                myhandler.createdirectionaryshell();
+//                config.setString("downloadpath", path);
+                
+            }else{
+//                path = config.getString("downloadpath");
+            }
+        } catch (JsonParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (JsonMappingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        
 
         shell.open();
         while (!shell.isDisposed()) {
@@ -71,6 +111,8 @@ public class SWT_App {
     }
 
     public Shell createShell(final Display display, final Shell shell) {
+          
+        
 
         // Constructing a new shell for the main window
         //

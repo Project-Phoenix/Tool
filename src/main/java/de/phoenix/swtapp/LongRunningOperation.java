@@ -41,7 +41,7 @@ public class LongRunningOperation extends Thread {
     }
 
     public void run() {
-        System.out.println("starting new thread");
+    
         for (int i = 0; i <= 100; i++) {
             
            if(!this.isactive){
@@ -79,10 +79,9 @@ public class LongRunningOperation extends Thread {
     }
     
     public void kthread(){
-        
-        System.out.println(isactive);
+       
         this.isactive=false;
-        System.err.println(isactive);
+       
     }
     
 
