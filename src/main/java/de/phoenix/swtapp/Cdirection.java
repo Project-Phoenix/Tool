@@ -26,7 +26,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -34,35 +33,38 @@ import org.eclipse.swt.widgets.Text;
 public class Cdirection {
 
     private MyHandler myhandler;
-    private static Shell shell;
-    private static Display display;
+//    private static Shell shell;
+//    private static Display display;
 
     public Cdirection() {
         myhandler = new MyHandler();
-        display = new Display();
-        shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
-        shell = createPathDirectionShell();
-        shell.setSize(350, 100);
-        myhandler.centerWindow(shell);
-
+//        shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
+//        System.out.println("2CREATING shell");
+//        shell = createPathDirectionShell();
+//        System.out.println("setsize");
+//        shell.setSize(350, 100);  
+//        shell.open();
+//        myhandler.centerWindow(shell);
+ 
     }
 
     
-    public static void main(String[] args) {
+//    public static void main(String[] args) {
+//        System.out.println("new direction");
+//        
+//        while (!shell.isDisposed()) {
+//            if (!display.readAndDispatch())
+//                display.sleep();
+//
+//        }
+//        display.dispose();
+//
+//    }
 
-        new Cdirection();
-        shell.open();
-        while (!shell.isDisposed()) {
-            if (!display.readAndDispatch())
-                display.sleep();
-
-        }
-        display.dispose();
-
-    }
-
-    public Shell createPathDirectionShell() {
-
+    
+    public Shell createPathDirectionShell(Shell shell) {
+//        myhandler.startCDirection();
+        System.out.println("schon drinne");
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 6;
         gridLayout.makeColumnsEqualWidth = true;
@@ -93,9 +95,11 @@ public class Cdirection {
         Button browseB = new Button(shell, SWT.PUSH);
         browseB.setText("Browse");
         browseB.setLayoutData(brow);
+        final Shell shell1=shell;
         browseB.addSelectionListener(new SelectionAdapter() {
+            
             public void widgetSelected(SelectionEvent event) {
-                DirectoryDialog directoryDialog = new DirectoryDialog(shell);
+                DirectoryDialog directoryDialog = new DirectoryDialog(shell1);
 
 //                // Set the initial filter path according
 //                // to anything they've selected or typed in
@@ -144,7 +148,7 @@ public class Cdirection {
         cancel.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-                myhandler.closeWindow(shell);
+                myhandler.closeWindow(shell1);
 
             }
 
@@ -154,8 +158,11 @@ public class Cdirection {
             }
         });
 
+        myhandler.centerWindow(shell);
+        shell.open();
         return shell;
 
     }
+    
 
 }

@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Text;
 public class Login extends Composite {
     private MyHandler myhandler;
     private LoginHandler loginhandler;
-    private LongRunningOperation thread;
+    private LongRunningOperation threadLogin;
 
     public Login(Composite parent, int style, MyHandler myhandler, LoginHandler loginhandler) {
         super(parent, 0);
@@ -55,25 +55,25 @@ public class Login extends Composite {
         // Constructing a new shell for the login window
         // Sketch: GridLayout with 3 columns.
         // -----------------------------------------------
-        // |     Label      |            Label           |
+        // | Label | Label |
         // |---------------------------------------------|
-        // |                Progressbar                  |
+        // | Progressbar |
         // |---------------------------------------------|
-        // |                Label Username               |
+        // | Label Username |
         // |---------------------------------------------|
-        // |                Text Username                |
+        // | Text Username |
         // |---------------------------------------------|
-        // |                Label Password               |
+        // | Label Password |
         // |---------------------------------------------|
-        // |                Text Password                |
+        // | Text Password |
         // |---------------------------------------------|
-        // |                Button Checkbox              |
+        // | Button Checkbox |
         // |---------------------------------------------|
-        // |                                             |
-        // |                Button Login                 |
+        // | |
+        // | Button Login |
         // |---------------------------------------------|
-        // |                                             |
-        // |                Button Cancel                |
+        // | |
+        // | Button Cancel |
         // ----------------------------------------------|
 
         Image loginicon = new Image(display, this.getClass().getResourceAsStream("/loginkey_50x50.png"));
@@ -155,8 +155,8 @@ public class Login extends Composite {
                 // To visualize the progressbar a new thread must be started.
                 // The boolean is needed for killing this new thread
                 button_login_submit.setEnabled(false);
-                thread = new LongRunningOperation(display, loadbar, button_login_submit, messageAns);
-                thread.start();
+                threadLogin = new LongRunningOperation(display, loadbar, button_login_submit, messageAns);
+                threadLogin.start();
 
             }
 
@@ -176,9 +176,12 @@ public class Login extends Composite {
                 // After clicking on the cancel button the thread will be
                 // immediately interrupted. This is realized with a boolean,
                 // which will change it state.
-                thread.kthread();
-                myhandler.closeWindow(shell);
 
+                if (threadLogin != null) {
+                    threadLogin.kthread();
+                }
+
+                myhandler.closeWindow(shell.getShell());
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -189,6 +192,5 @@ public class Login extends Composite {
         shell.open();
 
         return shell;
-
     }
 }

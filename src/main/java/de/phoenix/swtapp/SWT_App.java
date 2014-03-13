@@ -37,13 +37,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-
-import sun.security.krb5.Config;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -55,17 +52,16 @@ public class SWT_App {
     private static MyHandler myhandler;
     private static Display display;
     private static Shell shell;
+    private static CdirectionThread thread;
 
     public SWT_App() {
 
         myhandler = new MyHandler();
         display = new Display();
-        System.out.println("asdawf");
         shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
         shell = createShell(display, shell);
         shell.setSize(650, 400);
         myhandler.centerWindow(shell);
-        
 
     }
 
@@ -73,18 +69,14 @@ public class SWT_App {
         new SWT_App();
         try {
             Configuration config = new JSONConfiguration("config.json");
-            if(!config.exists("downloadpath")){    
-                System.out.println("12241321234");
-              
-               
-                MessageBox message= new MessageBox(shell, SWT.ICON_QUESTION|SWT.YES);
-                message.setMessage("It seems to be your first start. Please enter where you want to save your files");
-                message.open();
-                //TODO: ERROR occurs here. Invalid thread access. Pls FIX it
-//                myhandler.createdirectionaryshell();
-//                config.setString("downloadpath", path);
-                
-            }else{
+            if (!config.exists("downloadpath")) {
+                System.out.println("starting new thread");
+
+                thread = new CdirectionThread();
+                thread.start();
+            }
+
+            else {
 //                path = config.getString("downloadpath");
             }
         } catch (JsonParseException e) {
@@ -97,37 +89,37 @@ public class SWT_App {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-        
+        while (true) {
+            if(display.isDisposed())break;
+            if (!thread.isAlive()) {
+                shell.open();
+                while (!shell.isDisposed()) {
+                    if (!display.readAndDispatch())
+                        display.sleep();
 
-        shell.open();
-        while (!shell.isDisposed()) {
-            if (!display.readAndDispatch())
-                display.sleep();
-
+                }
+                display.dispose();
+            }
         }
-        display.dispose();
 
     }
 
     public Shell createShell(final Display display, final Shell shell) {
-          
-        
 
         // Constructing a new shell for the main window
         //
         // -----------------------------------------------
-        // |            Userstatistic                    |
+        // | Userstatistic |
         // |---------------------------------------------|
-        // |                                             |
+        // | |
         // |---------------------------------------------|
-        // |                               |Download     |
-        // |                               |-------------|
-        // |                               |Upload       |
-        // |              DNDBox           |-------------|
-        // |                               |Option       |
-        // |                               |-------------|
-        // |                               |Login        |
+        // | |Download |
+        // | |-------------|
+        // | |Upload |
+        // | DNDBox |-------------|
+        // | |Option |
+        // | |-------------|
+        // | |Login |
         // |-------------------------------|-------------|
 
         GridLayout gridLayout = new GridLayout();
@@ -176,7 +168,7 @@ public class SWT_App {
         DropTarget targetShell = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_MOVE);
 
         targetShell.setTransfer(new Transfer[]{fileTransfer});
-
+        
         targetShell.addDropListener(new DropTargetListener() {
 
             public void dropAccept(DropTargetEvent event) {
@@ -332,6 +324,18 @@ public class SWT_App {
         Button optionButton = new Button(shell, SWT.PUSH);
         optionButton.setLayoutData(grid);
         optionButton.setText("Option");
+        optionButton.addSelectionListener(new SelectionListener() {
+            
+            public void widgetSelected(SelectionEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            public void widgetDefaultSelected(SelectionEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+        });
 
         Button loginButton = new Button(shell, SWT.PUSH);
         loginButton.setText("Login");

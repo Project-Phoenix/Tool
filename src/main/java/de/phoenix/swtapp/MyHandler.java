@@ -20,17 +20,11 @@ package de.phoenix.swtapp;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -41,7 +35,7 @@ public class MyHandler {
     private String path;
     
     public MyHandler() {
-        this.loginhandler=loginhandler;
+//        this.loginhandler=loginhandler;
     }
 
     public void getLoginData() {
@@ -106,10 +100,6 @@ public class MyHandler {
 
     public void createdirectionaryshell() {
         
-        
-        Cdirection directionWindow = new Cdirection();
-        directionWindow.createPathDirectionShell();
-        
 
     }
 
@@ -119,6 +109,8 @@ public class MyHandler {
         }
         
     }
+
+   
 
     
 }

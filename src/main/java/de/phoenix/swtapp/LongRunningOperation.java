@@ -37,7 +37,6 @@ public class LongRunningOperation extends Thread {
         this.loadbar = loadbar;
         this.button_login_submit = button_login_submit;
         this.messageAns = messageAns;
-   
     }
 
     public void run() {
