@@ -20,25 +20,14 @@ package de.phoenix.swtapp;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-public class CdirectionThread extends Thread {
-
+public class CdirectionThread2 extends Thread {
+    
     public void run() {
         final Display display = new Display();
         final Shell shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
         shell.setSize(350, 100);
-
-        display.syncExec(new Runnable() {
-
-            public void run() {
-
-                MessageBox message = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES);
-                message.setMessage("It seems to be your first start. Please enter where you want to save your files");
-                message.open();
-            }
-        });
 
         display.syncExec(new Runnable() {
 

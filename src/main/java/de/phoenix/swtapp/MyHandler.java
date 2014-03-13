@@ -100,17 +100,18 @@ public class MyHandler {
 
     public void createdirectionaryshell() {
         
-
     }
 
-    public void checkpath(Text text) {
-        if(text.getText()!=null){
-            path = text.getText();
+    public void checkpath(Text text, Shell shell) {
+        if(!text.getText().isEmpty()){
+            path = text.getText().replace('\\', '/');
+            System.out.println(path);
+            
+            closeWindow(shell);
         }
         
+        
     }
-
-   
 
     
 }

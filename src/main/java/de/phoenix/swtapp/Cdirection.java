@@ -48,23 +48,10 @@ public class Cdirection {
  
     }
 
-    
-//    public static void main(String[] args) {
-//        System.out.println("new direction");
-//        
-//        while (!shell.isDisposed()) {
-//            if (!display.readAndDispatch())
-//                display.sleep();
-//
-//        }
-//        display.dispose();
-//
-//    }
 
     
-    public Shell createPathDirectionShell(Shell shell) {
-//        myhandler.startCDirection();
-        System.out.println("schon drinne");
+    public Shell createPathDirectionShell(final Shell shell) {
+
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 6;
         gridLayout.makeColumnsEqualWidth = true;
@@ -133,7 +120,7 @@ public class Cdirection {
         accept.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-               myhandler.checkpath(text);
+               myhandler.checkpath(text, shell);
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {

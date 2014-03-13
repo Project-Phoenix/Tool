@@ -53,6 +53,8 @@ public class SWT_App {
     private static Display display;
     private static Shell shell;
     private static CdirectionThread thread;
+    private static CdirectionThread2 thread2;
+    private static boolean dWindow;
 
     public SWT_App() {
 
@@ -68,16 +70,35 @@ public class SWT_App {
     public static void main(String[] args) {
         new SWT_App();
         try {
-            Configuration config = new JSONConfiguration("config.json");
-            if (!config.exists("downloadpath")) {
-                System.out.println("starting new thread");
 
+            Configuration config = new JSONConfiguration("config.json");
+
+            if (!config.exists("downloadpath")) {
+
+//                config.setString("downloadpath", "C:\Users\Sir Lui\Desktop\Phoenix\Ph_Workspace");
+                dWindow = true;
+                config.setString("downloadpath", "C:/Users/Sir Lui/Desktop/Phoenix/Ph_Workspace");
                 thread = new CdirectionThread();
                 thread.start();
+
+                while (true) {
+                    if (display.isDisposed())
+                        break;
+                    if (!thread.isAlive()) {
+                        shell.open();
+                        while (!shell.isDisposed()) {
+                            if (!display.readAndDispatch())
+                                display.sleep();
+
+                        }
+                        display.dispose();
+                    }
+                }
             }
 
             else {
-//                path = config.getString("downloadpath");
+                String path = config.getString("downloadpath");
+                
             }
         } catch (JsonParseException e) {
             // TODO Auto-generated catch block
@@ -89,19 +110,17 @@ public class SWT_App {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        while (true) {
-            if(display.isDisposed())break;
-            if (!thread.isAlive()) {
-                shell.open();
-                while (!shell.isDisposed()) {
-                    if (!display.readAndDispatch())
-                        display.sleep();
 
-                }
-                display.dispose();
+        if (!dWindow) {
+            shell.open();
+            while (!shell.isDisposed()) {
+                if (!display.readAndDispatch())
+                    display.sleep();
+
             }
-        }
+            display.dispose();
 
+        }
     }
 
     public Shell createShell(final Display display, final Shell shell) {
@@ -168,7 +187,7 @@ public class SWT_App {
         DropTarget targetShell = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_MOVE);
 
         targetShell.setTransfer(new Transfer[]{fileTransfer});
-        
+
         targetShell.addDropListener(new DropTargetListener() {
 
             public void dropAccept(DropTargetEvent event) {
@@ -325,15 +344,16 @@ public class SWT_App {
         optionButton.setLayoutData(grid);
         optionButton.setText("Option");
         optionButton.addSelectionListener(new SelectionListener() {
-            
+
             public void widgetSelected(SelectionEvent e) {
-                // TODO Auto-generated method stub
-                
+                thread2 = new CdirectionThread2();
+                thread2.start();
+
             }
-            
+
             public void widgetDefaultSelected(SelectionEvent e) {
                 // TODO Auto-generated method stub
-                
+
             }
         });
 
