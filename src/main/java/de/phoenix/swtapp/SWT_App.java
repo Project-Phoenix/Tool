@@ -371,6 +371,8 @@ public class SWT_App {
         });
 
         shell.pack();
+        
+ //TODO: beim ersten mal sollte PFAD eingegebn werden, Option anzeige des Pfads
 
         return shell;
     }
