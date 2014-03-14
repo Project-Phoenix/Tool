@@ -55,7 +55,7 @@ public class Login extends Composite {
         // Constructing a new shell for the login window
         // Sketch: GridLayout with 3 columns.
         // -----------------------------------------------
-        // | Label | Label          |
+        // | Label | Label |
         // |---------------------------------------------|
         // | Progressbar |
         // |---------------------------------------------|

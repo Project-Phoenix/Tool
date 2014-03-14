@@ -74,27 +74,29 @@ public class SWT_App {
             Configuration config = new JSONConfiguration("config.json");
 
             if (!config.exists("downloadpath")) {
-
-//                config.setString("downloadpath", "C:\Users\Sir Lui\Desktop\Phoenix\Ph_Workspace");
                 dWindow = true;
-                config.setString("downloadpath", "C:/Users/Sir Lui/Desktop/Phoenix/Ph_Workspace");
+//                config.setString("downloadpath", "C:/Users/Sir Lui/Desktop/Phoenix/Ph_Workspace");
                 thread = new CdirectionThread();
                 thread.start();
 
                 while (true) {
-                    if (display.isDisposed())
+                   if (display.isDisposed()){
                         break;
+                    }
                     if (!thread.isAlive()) {
+                    
                         shell.open();
                         while (!shell.isDisposed()) {
                             if (!display.readAndDispatch())
                                 display.sleep();
 
                         }
+                       
                         display.dispose();
                     }
                 }
             }
+            
 
             else {
                 String path = config.getString("downloadpath");
@@ -110,7 +112,8 @@ public class SWT_App {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
+        
+        
         if (!dWindow) {
             shell.open();
             while (!shell.isDisposed()) {

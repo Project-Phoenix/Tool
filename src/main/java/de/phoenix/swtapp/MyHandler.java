@@ -104,9 +104,7 @@ public class MyHandler {
 
     public void checkpath(Text text, Shell shell) {
         if(!text.getText().isEmpty()){
-            path = text.getText().replace('\\', '/');
-            System.out.println(path);
-            
+            path = text.getText().replace('\\', '/');           
             closeWindow(shell);
         }
         

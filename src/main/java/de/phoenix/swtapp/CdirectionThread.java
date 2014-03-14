@@ -27,7 +27,7 @@ public class CdirectionThread extends Thread {
 
     public void run() {
         final Display display = new Display();
-        final Shell shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
+        final Shell shell = new Shell(SWT.APPLICATION_MODAL | SWT.CLOSE);
         shell.setSize(350, 100);
 
         display.syncExec(new Runnable() {
@@ -36,6 +36,7 @@ public class CdirectionThread extends Thread {
 
                 MessageBox message = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES);
                 message.setMessage("It seems to be your first start. Please enter where you want to save your files");
+                message.setText("Starting for the first time");
                 message.open();
             }
         });

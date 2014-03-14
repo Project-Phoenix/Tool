@@ -19,6 +19,10 @@
 package de.phoenix.swtapp;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -26,30 +30,25 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class Cdirection {
 
     private MyHandler myhandler;
-//    private static Shell shell;
-//    private static Display display;
+    private boolean iswText = true;
+    private boolean cancelClicked;
+    private boolean acceptClicked;
+    private boolean redXClicked;
 
     public Cdirection() {
         myhandler = new MyHandler();
-//        shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
-//        System.out.println("2CREATING shell");
-//        shell = createPathDirectionShell();
-//        System.out.println("setsize");
-//        shell.setSize(350, 100);  
-//        shell.open();
-//        myhandler.centerWindow(shell);
- 
     }
 
-
-    
     public Shell createPathDirectionShell(final Shell shell) {
 
         GridLayout gridLayout = new GridLayout();
@@ -70,8 +69,12 @@ public class Cdirection {
         pathT.horizontalAlignment = GridData.FILL;
         pathT.horizontalSpan = 4;
 
+        final String textHint = "Please enter your downloadpath";
         final Text text = new Text(shell, SWT.BORDER);
         text.setLayoutData(pathT);
+
+        text.setText(textHint);
+        text.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 
         // After clicking on Button the user is capable of selecting a
         // directionpath in the directorydiaolog
@@ -82,9 +85,10 @@ public class Cdirection {
         Button browseB = new Button(shell, SWT.PUSH);
         browseB.setText("Browse");
         browseB.setLayoutData(brow);
-        final Shell shell1=shell;
+
+        final Shell shell1 = shell;
         browseB.addSelectionListener(new SelectionAdapter() {
-            
+
             public void widgetSelected(SelectionEvent event) {
                 DirectoryDialog directoryDialog = new DirectoryDialog(shell1);
 
@@ -102,11 +106,49 @@ public class Cdirection {
                 // It will return the selected directory, or
                 // null if user cancels
                 String direction = directoryDialog.open();
-               
+
                 if (direction != null) {
                     // Set the text box to the new selection
                     text.setText(direction);
+                    text.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+
                 }
+            }
+        });
+
+        text.addMouseMoveListener(new MouseMoveListener() {
+
+            public void mouseMove(MouseEvent e) {
+
+                if (!iswText && text.getText().isEmpty()) {
+                    text.setText(textHint);
+                    text.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+                }
+
+            }
+        });
+
+        text.addKeyListener(new KeyListener() {
+
+            public void keyReleased(KeyEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+
+            public void keyPressed(KeyEvent e) {
+                if (iswText && text.getText().isEmpty()) {
+                    iswText = false;
+                    text.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+                    text.setText(textHint);
+
+                }
+
+                if (text.getText().equals(textHint)) {
+                    text.setText("");
+                    iswText = false;
+                    text.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+                }
+
             }
         });
 
@@ -120,7 +162,9 @@ public class Cdirection {
         accept.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-               myhandler.checkpath(text, shell);
+                acceptClicked = true;
+                myhandler.checkpath(text, shell);
+
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -129,13 +173,26 @@ public class Cdirection {
             }
         });
 
-        Button cancel = new Button(shell, SWT.PUSH);
+        final Button cancel = new Button(shell, SWT.PUSH);
         cancel.setText("Cancel");
         cancel.setLayoutData(botLine);
         cancel.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-                myhandler.closeWindow(shell1);
+                cancelClicked = true;
+                if (!text.getText().isEmpty() && !text.getText().equals(textHint)) {
+
+                    MessageBox message = new MessageBox(shell1, SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
+                    message.setText("Information");
+                    message.setMessage("Do you want to close the programm?");
+
+                    if (message.open() == SWT.YES) {
+                        myhandler.closeWindow(shell1);
+                        System.exit(0);
+                    }
+                } else {
+                    System.exit(0);
+                }
 
             }
 
@@ -146,10 +203,20 @@ public class Cdirection {
         });
 
         myhandler.centerWindow(shell);
+
+        shell.addListener(SWT.Close, new Listener() {
+
+            public void handleEvent(Event event) {
+                if (!cancelClicked && !acceptClicked && !redXClicked) {
+                    System.exit(0);
+                    
+                }
+            }
+        });
+
         shell.open();
         return shell;
 
     }
-    
 
 }
