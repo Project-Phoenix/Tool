@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Text;
 public class MyHandler {
     private LoginHandler loginhandler;
     private String path;
-    
+
     public MyHandler() {
 //        this.loginhandler=loginhandler;
     }
@@ -42,6 +42,8 @@ public class MyHandler {
 
     }
 
+// This will create the window, where the user can log in. This is necessary, 
+// because the user requires permissions for downloading and uploading files.
     public void createloginshell(Shell shell, Display display) {
         Login loginWindow = new Login(shell, 0, this, loginhandler);
         Shell loginshell = new Shell(SWT.ON_TOP | SWT.CLOSE);
@@ -49,11 +51,14 @@ public class MyHandler {
 
     }
 
+// This will create the window, which will show the downloadable files 
     public void creatdownloadshell(Shell shell, Display display) {
         Download downloadWindow = new Download(shell, 0, this);
         Shell downloadShell = new Shell(SWT.ON_TOP | SWT.CLOSE);
         downloadWindow.downloadShell(display, downloadShell);
     }
+
+// Each file dropped into the DnD Box will create a new tableitem into the table
     public void createTableItem(Table control, Item item, Button removeB, TableItem[] items, TableEditor editor) {
 
         removeB.setText("Remove");
@@ -62,6 +67,7 @@ public class MyHandler {
         editor.setEditor(removeB, items[items.length - 1], 1);
     }
 
+// The user can delete specific rows by clicking on the "remove" button.
     public void deleteRow(Table control, TableEditor editor, Button removeB, TableItem item, TableItem[] items) {
 
         removeB.dispose();
@@ -82,6 +88,7 @@ public class MyHandler {
 
     }
 
+// This method set the window to the center of the display
     public void centerWindow(Shell shell) {
         Rectangle bounds = shell.getDisplay().getBounds();
 
@@ -99,17 +106,16 @@ public class MyHandler {
     }
 
     public void createdirectionaryshell() {
-        
+
     }
 
+//  Saving the pathfile, which the user chose. If no path was selected the window will not close
     public void checkpath(Text text, Shell shell) {
-        if(!text.getText().isEmpty()){
-            path = text.getText().replace('\\', '/');           
+        if (!text.getText().isEmpty() && !text.getText().matches("Please enter your downloadpath")) {
+            path = text.getText().replace('\\', '/');
             closeWindow(shell);
         }
-        
-        
+
     }
 
-    
 }

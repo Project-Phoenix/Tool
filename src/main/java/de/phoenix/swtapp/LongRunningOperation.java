@@ -29,9 +29,12 @@ public class LongRunningOperation extends Thread {
     private ProgressBar loadbar;
     private Button button_login_submit;
     private Label messageAns;
-    private Boolean isactive=true;
-   
+    private Boolean isactive = true;
 
+//  This thread will visualize the progressbar when 
+//  the user will log into the system, so the user has the
+//  possibilities to close or translate the 
+//  window to a other position
     public LongRunningOperation(Display display, ProgressBar loadbar, Button button_login_submit, Label messageAns) {
         this.display = display;
         this.loadbar = loadbar;
@@ -40,17 +43,17 @@ public class LongRunningOperation extends Thread {
     }
 
     public void run() {
-    
+
         for (int i = 0; i <= 100; i++) {
-            
-           if(!this.isactive){
+
+            if (!this.isactive) {
 //               System.out.println("closing thread");
-               return;
-           }
-            
+                return;
+            }
+
             try {
                 Thread.sleep(100);
-                
+
             } catch (InterruptedException e) {
 
             }
@@ -64,7 +67,7 @@ public class LongRunningOperation extends Thread {
                     button_login_submit.setText("Checking");
                 }
             });
-            
+
         }
         display.asyncExec(new Runnable() {
             public void run() {
@@ -76,12 +79,11 @@ public class LongRunningOperation extends Thread {
         });
 
     }
-    
-    public void kthread(){
-       
-        this.isactive=false;
-       
+
+    public void kthread() {
+
+        this.isactive = false;
+
     }
-    
 
 }

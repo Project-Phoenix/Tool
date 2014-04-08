@@ -23,7 +23,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public class CdirectionThread2 extends Thread {
-    
+
+//    This thread is needed for the option window
+
     public void run() {
         final Display display = new Display();
         final Shell shell = new Shell(SWT.ON_TOP | SWT.CLOSE);

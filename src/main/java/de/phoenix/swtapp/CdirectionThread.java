@@ -25,6 +25,9 @@ import org.eclipse.swt.widgets.Shell;
 
 public class CdirectionThread extends Thread {
 
+    // This thread is needed when the user starts the GUI for the first time. So
+    // it is possible for the user to choose a downloadpath in a parallel thread
+    // while the main thread is waiting until this thread is dead.
     public void run() {
         final Display display = new Display();
         final Shell shell = new Shell(SWT.APPLICATION_MODAL | SWT.CLOSE);

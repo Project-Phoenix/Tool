@@ -76,7 +76,7 @@ public class Cdirection {
         text.setText(textHint);
         text.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 
-        // After clicking on Button the user is capable of selecting a
+        // After clicking on the Button the user is capable of selecting a
         // directionpath in the directorydiaolog
         GridData brow = new GridData();
         brow.horizontalAlignment = GridData.FILL;
@@ -87,24 +87,17 @@ public class Cdirection {
         browseB.setLayoutData(brow);
 
         final Shell shell1 = shell;
+        // By clickong on the "browser" button the user can select a download
+        // file
         browseB.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent event) {
                 DirectoryDialog directoryDialog = new DirectoryDialog(shell1);
 
-//                // Set the initial filter path according
-//                // to anything they've selected or typed in
                 directoryDialog.setFilterPath(text.getText());
-
-                // Change the title bar text
                 directoryDialog.setText("Browser");
-
-                // Customizable message displayed in the dialog
                 directoryDialog.setMessage("Select a directory");
 
-                // Calling open() will open and run the dialog.
-                // It will return the selected directory, or
-                // null if user cancels
                 String direction = directoryDialog.open();
 
                 if (direction != null) {
@@ -116,6 +109,9 @@ public class Cdirection {
             }
         });
 
+        // This two listeners will refresh the standard text
+        // "please enter your downloadpath"
+        // when the user let the textfield empty
         text.addMouseMoveListener(new MouseMoveListener() {
 
             public void mouseMove(MouseEvent e) {
@@ -161,8 +157,16 @@ public class Cdirection {
         accept.setLayoutData(botLine);
         accept.addSelectionListener(new SelectionListener() {
 
+            // If a downloadpath is chosen and it shows up in the textfield the
+            // user will be able to dl or ul files after clicking on accept,
+            // else the program will ignore it until there is a path in the
+            // textfield or the user close the window. Closing the window will
+            // shut down the program, when no path was selected
             public void widgetSelected(SelectionEvent e) {
-                acceptClicked = true;
+                if (!text.getText().isEmpty() && !text.getText().matches("Please enter your downloadpath")) {
+                    acceptClicked = true;
+                }
+
                 myhandler.checkpath(text, shell);
 
             }
@@ -176,6 +180,9 @@ public class Cdirection {
         final Button cancel = new Button(shell, SWT.PUSH);
         cancel.setText("Cancel");
         cancel.setLayoutData(botLine);
+        // Selecting a pathfile and then try to close the window will show up a
+        // message, which will ensure the userdecision, else the GUI will shut
+        // down
         cancel.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
@@ -209,7 +216,7 @@ public class Cdirection {
             public void handleEvent(Event event) {
                 if (!cancelClicked && !acceptClicked && !redXClicked) {
                     System.exit(0);
-                    
+
                 }
             }
         });
