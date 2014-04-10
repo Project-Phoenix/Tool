@@ -55,6 +55,8 @@ public class SWT_App {
     private static CdirectionThread thread;
     private static CdirectionThread2 thread2;
     private static boolean dWindow;
+    private static boolean showPathInOpt;
+    private static Configuration config;
 
     public SWT_App() {
 
@@ -71,12 +73,11 @@ public class SWT_App {
         new SWT_App();
         try {
 
-            Configuration config = new JSONConfiguration("config.json");
+            config = new JSONConfiguration("config.json");
 
             if (!config.exists("downloadpath")) {
                 dWindow = true;
-//                config.setString("downloadpath", "C:/Users/Sir Lui/Desktop/Phoenix/Ph_Workspace");
-                thread = new CdirectionThread();
+                thread = new CdirectionThread(showPathInOpt, config);
                 thread.start();
 
                 while (true) {
@@ -100,7 +101,7 @@ public class SWT_App {
 
             else {
                 String path = config.getString("downloadpath");
-                
+                showPathInOpt=true;
             }
         } catch (JsonParseException e) {
             // TODO Auto-generated catch block
@@ -349,7 +350,7 @@ public class SWT_App {
         optionButton.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-                thread2 = new CdirectionThread2();
+                thread2 = new CdirectionThread2(showPathInOpt, config);
                 thread2.start();
 
             }
@@ -375,7 +376,7 @@ public class SWT_App {
 
         shell.pack();
         
- //TODO: beim ersten mal sollte PFAD eingegebn werden, Option anzeige des Pfads
+ //TODO: ENTFERNE BUG, WELCHER durch mehrmaliges aufrufen der option einen Xception wirft
 
         return shell;
     }

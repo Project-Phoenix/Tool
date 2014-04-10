@@ -22,9 +22,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import de.phoenix.util.Configuration;
+
 public class CdirectionThread2 extends Thread {
 
+    private boolean showPathInOpt;
+    private Configuration config;
 //    This thread is needed for the option window
+    public CdirectionThread2(boolean showPathInOpt, Configuration config) {
+       this.showPathInOpt=showPathInOpt;
+       this.config=config;
+    }
 
     public void run() {
         final Display display = new Display();
@@ -38,7 +46,7 @@ public class CdirectionThread2 extends Thread {
                     return;
 
                 Cdirection directionWindow = new Cdirection();
-                directionWindow.createPathDirectionShell(shell);
+                directionWindow.createPathDirectionShell(shell, showPathInOpt, config);
 
                 while (!shell.isDisposed()) {
                     if (!display.readAndDispatch())

@@ -37,6 +37,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.phoenix.util.Configuration;
+
 public class Cdirection {
 
     private MyHandler myhandler;
@@ -44,12 +46,13 @@ public class Cdirection {
     private boolean cancelClicked;
     private boolean acceptClicked;
     private boolean redXClicked;
+    private String path;
 
     public Cdirection() {
         myhandler = new MyHandler();
     }
 
-    public Shell createPathDirectionShell(final Shell shell) {
+    public Shell createPathDirectionShell(final Shell shell, boolean showPathInOpt, final Configuration config) {
 
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 6;
@@ -69,12 +72,21 @@ public class Cdirection {
         pathT.horizontalAlignment = GridData.FILL;
         pathT.horizontalSpan = 4;
 
+        final Shell shell1 = shell;
+        final DirectoryDialog directoryDialog = new DirectoryDialog(shell1);
         final String textHint = "Please enter your downloadpath";
-        final Text text = new Text(shell, SWT.BORDER);
+        final Text text = new Text(shell, SWT.BORDER | SWT.WRAP);
         text.setLayoutData(pathT);
+       
+        if (config.exists("downloadpath")) {
+            System.out.println("SETTING TEXT");
+            text.setText(config.getString("downloadpath"));
 
-        text.setText(textHint);
-        text.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+        } else {
+
+            text.setText(textHint);
+            text.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+        }
 
         // After clicking on the Button the user is capable of selecting a
         // directionpath in the directorydiaolog
@@ -86,13 +98,11 @@ public class Cdirection {
         browseB.setText("Browse");
         browseB.setLayoutData(brow);
 
-        final Shell shell1 = shell;
         // By clickong on the "browser" button the user can select a download
         // file
         browseB.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent event) {
-                DirectoryDialog directoryDialog = new DirectoryDialog(shell1);
 
                 directoryDialog.setFilterPath(text.getText());
                 directoryDialog.setText("Browser");
@@ -102,6 +112,7 @@ public class Cdirection {
 
                 if (direction != null) {
                     // Set the text box to the new selection
+                    path = direction;
                     text.setText(direction);
                     text.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 
@@ -163,8 +174,11 @@ public class Cdirection {
             // textfield or the user close the window. Closing the window will
             // shut down the program, when no path was selected
             public void widgetSelected(SelectionEvent e) {
+                System.out.println("bin im acceptor");
                 if (!text.getText().isEmpty() && !text.getText().matches("Please enter your downloadpath")) {
                     acceptClicked = true;
+//                    if(config.getString("downloadpath") != path)
+                    config.setString("downloadpath", path);
                 }
 
                 myhandler.checkpath(text, shell);
@@ -186,23 +200,28 @@ public class Cdirection {
         cancel.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-                cancelClicked = true;
-                if (!text.getText().isEmpty() && !text.getText().equals(textHint)) {
 
-                    MessageBox message = new MessageBox(shell1, SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
-                    message.setText("Information");
-                    message.setMessage("Do you want to close the programm?");
+                if (config.exists("downloadpath")) {
+                    myhandler.closeWindow(shell1);
+                } else {
+                    if (!text.getText().isEmpty() && !text.getText().equals(textHint)) {
 
-                    if (message.open() == SWT.YES) {
-                        myhandler.closeWindow(shell1);
+                        MessageBox message = new MessageBox(shell1, SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
+                        message.setText("Information");
+                        message.setMessage("Do you want to close the programm?");
+
+                        if (message.open() == SWT.YES) {
+                            myhandler.closeWindow(shell1);
+                            System.exit(0);
+
+                        }
+                    } else {
                         System.exit(0);
                     }
-                } else {
-                    System.exit(0);
                 }
 
+                cancelClicked = true;
             }
-
             public void widgetDefaultSelected(SelectionEvent e) {
                 // TODO Auto-generated method stub
 
@@ -214,16 +233,20 @@ public class Cdirection {
         shell.addListener(SWT.Close, new Listener() {
 
             public void handleEvent(Event event) {
-                if (!cancelClicked && !acceptClicked && !redXClicked) {
-                    System.exit(0);
+//                if (!cancelClicked && !acceptClicked && !redXClicked) {
+                    if (!config.exists("downloadpath")) {
+                       
+                        System.exit(0);
+                        
+//                    }
 
                 }
             }
         });
 
         shell.open();
+
         return shell;
 
     }
-
 }
