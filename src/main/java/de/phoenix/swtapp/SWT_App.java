@@ -71,6 +71,7 @@ public class SWT_App {
 
     public static void main(String[] args) {
         new SWT_App();
+        
         try {
 
             config = new JSONConfiguration("config.json");

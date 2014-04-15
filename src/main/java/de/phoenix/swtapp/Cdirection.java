@@ -47,6 +47,7 @@ public class Cdirection {
     private boolean acceptClicked;
     private boolean redXClicked;
     private String path;
+    private boolean pathExist;
 
     public Cdirection() {
         myhandler = new MyHandler();
@@ -78,7 +79,8 @@ public class Cdirection {
         final Text text = new Text(shell, SWT.BORDER | SWT.WRAP);
         text.setLayoutData(pathT);
        
-        if (config.exists("downloadpath")) {
+        System.out.println("kurz davor  " + pathExist);
+        if (config.exists("downloadpath") && !pathExist) {
             System.out.println("SETTING TEXT");
             text.setText(config.getString("downloadpath"));
 
@@ -175,10 +177,18 @@ public class Cdirection {
             // shut down the program, when no path was selected
             public void widgetSelected(SelectionEvent e) {
                 System.out.println("bin im acceptor");
-                if (!text.getText().isEmpty() && !text.getText().matches("Please enter your downloadpath")) {
+                
+                //TODO Solve this bug !
+                if (!text.getText().matches("Please enter your downloadpath")) {
                     acceptClicked = true;
-//                    if(config.getString("downloadpath") != path)
+                    System.out.println(config.getString("downloadpath"));
+//                   if(config.getString("downloadpath") != path){
+//                      
+//                    
+//                    
+//                    System.out.println("bindrin___"+pathExist);
                     config.setString("downloadpath", path);
+//                   }c
                 }
 
                 myhandler.checkpath(text, shell);
