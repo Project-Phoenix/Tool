@@ -28,10 +28,12 @@ public class CdirectionThread2 extends Thread {
 
     private boolean showPathInOpt;
     private Configuration config;
-//    This thread is needed for the option window
+    // This thread is needed for the option window. It will replace
+    // CdirectionThread when the user clicks on the option button for the second
+    // time, but only if a config has been created.
     public CdirectionThread2(boolean showPathInOpt, Configuration config) {
-       this.showPathInOpt=showPathInOpt;
-       this.config=config;
+        this.showPathInOpt = showPathInOpt;
+        this.config = config;
     }
 
     public void run() {
@@ -56,7 +58,5 @@ public class CdirectionThread2 extends Thread {
                 display.dispose();
             }
         });
-
     }
-
 }

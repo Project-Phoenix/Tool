@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class Login extends Composite {
     private MyHandler myhandler;
+    @SuppressWarnings("unused")
     private LoginHandler loginhandler;
     private LongRunningOperation threadLogin;
 

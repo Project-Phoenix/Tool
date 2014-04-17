@@ -66,43 +66,45 @@ public class SWT_App {
         shell = createShell(display, shell);
         shell.setSize(650, 400);
         myhandler.centerWindow(shell);
-
     }
 
     public static void main(String[] args) {
         new SWT_App();
-        
+
         try {
 
             config = new JSONConfiguration("config.json");
-
+            // If a config does not exists the user have to go through "the
+            // first time using GUI"progress, where the user should select a
+            // downloadpath. After that the user will be redirect to the main
+            // window.
             if (!config.exists("downloadpath")) {
                 dWindow = true;
                 thread = new CdirectionThread(showPathInOpt, config);
                 thread.start();
 
                 while (true) {
-                   if (display.isDisposed()){
+                    if (display.isDisposed()) {
                         break;
                     }
                     if (!thread.isAlive()) {
-                    
+
                         shell.open();
                         while (!shell.isDisposed()) {
                             if (!display.readAndDispatch())
                                 display.sleep();
 
                         }
-                       
+
                         display.dispose();
                     }
                 }
             }
-            
 
             else {
+                @SuppressWarnings("unused")
                 String path = config.getString("downloadpath");
-                showPathInOpt=true;
+                showPathInOpt = true;
             }
         } catch (JsonParseException e) {
             // TODO Auto-generated catch block
@@ -114,17 +116,14 @@ public class SWT_App {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-        
+
         if (!dWindow) {
             shell.open();
             while (!shell.isDisposed()) {
                 if (!display.readAndDispatch())
                     display.sleep();
-
             }
             display.dispose();
-
         }
     }
 
@@ -189,6 +188,7 @@ public class SWT_App {
 
         final FileTransfer fileTransfer = FileTransfer.getInstance();
 
+        // Creating a DropTarget, where files can be dropped in that area.
         DropTarget targetShell = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_MOVE);
 
         targetShell.setTransfer(new Transfer[]{fileTransfer});
@@ -376,8 +376,6 @@ public class SWT_App {
         });
 
         shell.pack();
-        
- //TODO: ENTFERNE BUG, WELCHER durch mehrmaliges aufrufen der option einen Xception wirft
 
         return shell;
     }

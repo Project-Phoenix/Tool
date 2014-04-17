@@ -39,15 +39,21 @@ import org.eclipse.swt.widgets.Text;
 
 import de.phoenix.util.Configuration;
 
+@SuppressWarnings("unused")
 public class Cdirection {
+
+    // The SWT_App will create Cdirection when the user clicks on the option
+    // button.
+    // This class uses CdirectionThread and CdirectionThread2. CdirectionThread
+    // is only used for the first time. Then CdirectionThread2 will replace the
+    // function of CdirectionThread.
 
     private MyHandler myhandler;
     private boolean iswText = true;
-    private boolean cancelClicked;
-    private boolean acceptClicked;
-    private boolean redXClicked;
-    private String path;
+    private boolean okClicked;
+    private String path = "";
     private boolean pathExist;
+//  private boolean cancelClicked;
 
     public Cdirection() {
         myhandler = new MyHandler();
@@ -78,19 +84,17 @@ public class Cdirection {
         final String textHint = "Please enter your downloadpath";
         final Text text = new Text(shell, SWT.BORDER | SWT.WRAP);
         text.setLayoutData(pathT);
-       
-        System.out.println("kurz davor  " + pathExist);
+
+        // If it exists a downloadpath in the created config, the path will be
+        // show in the textfield else a standard text will show up
         if (config.exists("downloadpath") && !pathExist) {
-            System.out.println("SETTING TEXT");
             text.setText(config.getString("downloadpath"));
-
         } else {
-
             text.setText(textHint);
             text.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
         }
 
-        // After clicking on the Button the user is capable of selecting a
+        // After clicking on the button the user is capable of selecting a
         // directionpath in the directorydiaolog
         GridData brow = new GridData();
         brow.horizontalAlignment = GridData.FILL;
@@ -101,7 +105,8 @@ public class Cdirection {
         browseB.setLayoutData(brow);
 
         // By clickong on the "browser" button the user can select a download
-        // file
+        // file. Furthermore the config will be created when the user selects a
+        // path
         browseB.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent event) {
@@ -109,15 +114,14 @@ public class Cdirection {
                 directoryDialog.setFilterPath(text.getText());
                 directoryDialog.setText("Browser");
                 directoryDialog.setMessage("Select a directory");
-
                 String direction = directoryDialog.open();
 
                 if (direction != null) {
                     // Set the text box to the new selection
                     path = direction;
+                    config.setString("downloadpath", path);
                     text.setText(direction);
                     text.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-
                 }
             }
         });
@@ -160,35 +164,27 @@ public class Cdirection {
 
             }
         });
+        System.out.println("pathform before ok" + path);
 
         GridData botLine = new GridData();
         botLine.horizontalAlignment = GridData.FILL;
         botLine.horizontalSpan = 2;
 
-        Button accept = new Button(shell, SWT.PUSH);
-        accept.setText("Accept");
-        accept.setLayoutData(botLine);
-        accept.addSelectionListener(new SelectionListener() {
+        Button OK = new Button(shell, SWT.PUSH);
+        OK.setText("OK");
+        OK.setLayoutData(botLine);
+        OK.addSelectionListener(new SelectionListener() {
 
             // If a downloadpath is chosen and it shows up in the textfield the
             // user will be able to dl or ul files after clicking on accept,
             // else the program will ignore it until there is a path in the
             // textfield or the user close the window. Closing the window will
-            // shut down the program, when no path was selected
+            // shut down the program, when no path was selectedb
             public void widgetSelected(SelectionEvent e) {
-                System.out.println("bin im acceptor");
-                
-                //TODO Solve this bug !
+
                 if (!text.getText().matches("Please enter your downloadpath")) {
-                    acceptClicked = true;
-                    System.out.println(config.getString("downloadpath"));
-//                   if(config.getString("downloadpath") != path){
-//                      
-//                    
-//                    
-//                    System.out.println("bindrin___"+pathExist);
-                    config.setString("downloadpath", path);
-//                   }c
+//                    okClicked = true;
+                    System.out.println("pathform after ok" + path);
                 }
 
                 myhandler.checkpath(text, shell);
@@ -201,55 +197,50 @@ public class Cdirection {
             }
         });
 
-        final Button cancel = new Button(shell, SWT.PUSH);
-        cancel.setText("Cancel");
-        cancel.setLayoutData(botLine);
-        // Selecting a pathfile and then try to close the window will show up a
-        // message, which will ensure the userdecision, else the GUI will shut
-        // down
-        cancel.addSelectionListener(new SelectionListener() {
-
-            public void widgetSelected(SelectionEvent e) {
-
-                if (config.exists("downloadpath")) {
-                    myhandler.closeWindow(shell1);
-                } else {
-                    if (!text.getText().isEmpty() && !text.getText().equals(textHint)) {
-
-                        MessageBox message = new MessageBox(shell1, SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
-                        message.setText("Information");
-                        message.setMessage("Do you want to close the programm?");
-
-                        if (message.open() == SWT.YES) {
-                            myhandler.closeWindow(shell1);
-                            System.exit(0);
-
-                        }
-                    } else {
-                        System.exit(0);
-                    }
-                }
-
-                cancelClicked = true;
-            }
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // TODO Auto-generated method stub
-
-            }
-        });
+//        final Button cancel = new Button(shell, SWT.PUSH);
+//        cancel.setText("Cancel");
+//        cancel.setLayoutData(botLine);
+//        // Selecting a pathfile and then try to close the window will show up a
+//        // message, which will ensure the userdecision, else the GUI will shut
+//        // down
+//        cancel.addSelectionListener(new SelectionListener() {
+//
+//            public void widgetSelected(SelectionEvent e) {
+//
+//                if (config.exists("downloadpath")) {
+//                    myhandler.closeWindow(shell1);
+//                } else {
+//                    if (!text.getText().isEmpty() && !text.getText().equals(textHint)) {
+//
+//                        MessageBox message = new MessageBox(shell1, SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
+//                        message.setText("Information");
+//                        message.setMessage("Do you want to close the programm?");
+//
+//                        if (message.open() == SWT.YES) {
+//                            myhandler.closeWindow(shell1);
+//                            System.exit(0);
+//
+//                        }
+//                    } else {
+//                        System.exit(0);
+//                    }
+//                }
+//
+//                cancelClicked = true;
+//            }
+//            public void widgetDefaultSelected(SelectionEvent e) {
+//                // TODO Auto-generated method stub
+//
+//            }
+//        });
 
         myhandler.centerWindow(shell);
 
         shell.addListener(SWT.Close, new Listener() {
 
             public void handleEvent(Event event) {
-//                if (!cancelClicked && !acceptClicked && !redXClicked) {
-                    if (!config.exists("downloadpath")) {
-                       
-                        System.exit(0);
-                        
-//                    }
-
+                if (!config.exists("downloadpath")) {
+                    System.exit(0);
                 }
             }
         });
