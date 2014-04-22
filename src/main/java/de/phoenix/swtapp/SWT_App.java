@@ -24,10 +24,14 @@ import java.io.IOException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -211,8 +215,9 @@ public class SWT_App {
                     final TableItem item = new TableItem(control, SWT.NONE);
                     final TableItem[] items = control.getItems();
 
-                    File f = new File(files[0]);
-                    item.setText(f.getName());
+//                    File f = new File(files[0]);
+//                    item.setText(f.getName());
+                    item.setText(files[0]);
                     removeB.setData(item);
 
                     myhandler.createTableItem(control, item, removeB, items, editor);
@@ -270,29 +275,23 @@ public class SWT_App {
 
         });
 
-        // TODO
         // Setting the Drag and Drop Box as a new Dragsource
 
-//        DragSource ddbox= new DragSource(control, DND.DROP_TARGET_MOVE | DND.DROP_COPY);
-//        final FileTransfer fileTransferDL = FileTransfer.getInstance();
-//        
-//        ddbox.addDragListener(new DragSourceListener() {
-//            
-//            public void dragStart(DragSourceEvent arg0) {
-//                // TODO Auto-generated method stub
-//                
-//            }
-//            
-//            public void dragSetData(DragSourceEvent event) {
-//                if(fileTransfer.getInstance().isSupportedType(event.dataType));
-//                event.data= control.getData();
-//            }
-//            
-//            public void dragFinished(DragSourceEvent event) {
-//              
-//                
-//            }
-//        });
+        DragSource source = new DragSource(control, DND.DROP_TARGET_MOVE | DND.DROP_COPY);
+        source.setTransfer(new Transfer[]{TextTransfer.getInstance(), FileTransfer.getInstance()});
+        source.addDragListener(new DragSourceAdapter() {
+            @Override
+            public void dragSetData(DragSourceEvent event) {
+                if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
+                    TableItem[] selection = control.getSelection();
+                    File file = new File(selection[0].getText());
+                    event.data = new String[]{file.getAbsolutePath()};
+                }
+                if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
+                    event.data = "once upon a time";
+                }
+            }
+        });
 
         GridData gridTable = new GridData();
 
