@@ -319,7 +319,7 @@ public class SWT_App {
         downloadButton.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent arg0) {
-                myhandler.creatdownloadshell(shell, display);
+                myhandler.creatdownloadshell(shell, display, config);
 
             }
 

@@ -19,6 +19,7 @@
 package de.phoenix.swtapp;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,26 +31,35 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import sun.security.krb5.Config;
+
 import de.phoenix.rs.entity.PhoenixTaskSheet;
+import de.phoenix.util.Configuration;
 
 public class Download extends Composite {
 
     private MyHandler myhandler;
     private DownloadHandler downloadHandler;
+    private Configuration config;
+    private String path;
 
-    public Download(Composite parent, int style, MyHandler myhandler) {
+    public Download(Composite parent, int style, MyHandler myhandler, Configuration config) {
         super(parent, 0);
         this.myhandler = myhandler;
+        this.config = config;
         downloadHandler = new DownloadHandler();
 
     }
@@ -68,6 +78,8 @@ public class Download extends Composite {
         // | ----- Task1 |
         // | ----- Task2 |
         // |-------------|
+
+        path = config.getString("downloadpath");
 
         Image downloadicon = new Image(display, this.getClass().getResourceAsStream("/downloadicon_50x50.png"));
         shell.setImage(downloadicon);
@@ -92,91 +104,92 @@ public class Download extends Composite {
         tree.setSize(300, 300);
         myhandler.centerWindow(shell);
 
-        System.out.println("hole sheets");
+        final List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets();
 
-        List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets();
-        
-        int k = 0;
+//        int k = 0;
         if (taskSheets.isEmpty()) {
-            System.out.println("Sorry, there are no tasksheets available");
+            MessageBox msg = new MessageBox(shell);
+            msg.setMessage("Sorry, there are no tasksheets available");
+            msg.open();
+
             return null;
         } else {
             for (int i = 0; i < taskSheets.size(); i++) {
                 TreeItem parent = new TreeItem(tree, SWT.CHECK);
                 parent.setText(taskSheets.get(i).getTitle());
-                k++;
+//                k++;
                 for (int j = 0; j < taskSheets.get(i).getTasks().size(); j++) {
-                    
+
                     TreeItem subitem = new TreeItem(parent, SWT.CHECK);
                     subitem.setText(taskSheets.get(i).getTasks().get(j).getTitle());
-                    k++;
+//                    k++;
                 }
             }
             
+            //TODO: Bug beheben
+            tree.addSelectionListener(new SelectionListener() {
+                
+                public void widgetSelected(SelectionEvent e) {
+                    // TODO Auto-generated method stub
+                    
+                }
+                
+                public void widgetDefaultSelected(SelectionEvent e) {
+                    // TODO Auto-generated method stub
+                    
+                }
+            });
+
             DragSource downloadW = new DragSource(tree, DND.DROP_TARGET_MOVE | DND.DROP_COPY);
             downloadW.setTransfer(new Transfer[]{TextTransfer.getInstance(), FileTransfer.getInstance()});
+            
             downloadW.addDragListener(new DragSourceAdapter() {
                 @Override
                 public void dragSetData(DragSourceEvent event) {
                     if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
-                        TreeItem[] selection= tree.getSelection();     
+                        TreeItem[] selection = tree.getSelection();
+
+                        // if parent or subitem
+                        File file = new File(path);
                         
-                        //if parent or subitem
-                        File file = new File(selection[0].getText());
-                        
+
+                        int tempTaskSheet = 0;
+                        for (int i = 0; i < taskSheets.size(); i++) {
+                            
+                            for (int j = 0; j < taskSheets.get(i).getTasks().size(); j++) {
+
+                                if (taskSheets.get(i).getTasks().get(j).getTitle().equals(selection[0].getText())) {
+                                    System.out.println(taskSheets.get(i).getTasks().get(j).getTitle());
+                                    System.out.println(selection[0].getText());
+                                    tempTaskSheet = i;
+                                }
+
+//                                k++;
+                            }
+                        }
+
+                        try {
+                            downloadHandler.createTaskOnComputer(file, taskSheets.get(tempTaskSheet), path, selection[0].getText());
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
                         
                         event.data = new String[]{file.getAbsolutePath()};
+                        
+                    System.out.println("nach event");
                     }
                     if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-                        event.data = "once upon a time";
+                        event.data = "";
                     }
                 }
             });
-            
 
-//        for (int i = 0; i < taskSheets.size(); i++) {
-//
-//            TreeItem parent = new TreeItem(tree, SWT.CHECK);
-//            parent.setText(taskSheets.get(i));
-//
-////                parent.setImage(ts);
-//
-//            for (int j = 0; j < ; j++) {
-//                TreeItem subitem = new TreeItem(parent, SWT.CHECK);
-//                subitem.setText("Task_" + (j + 1));
-//                if ((j * i + 1) % 3 >= 1) {
-////                        subitem.setImage(abg);
-//
-//                }
-//
-//            }
+            shell.pack();
+            shell.open();
+
+            return shell;
+
         }
-//        Image ts = new Image(display, this.getClass().getResourceAsStream("/tasksheet.png"));
-//        Image neg = new Image(display, this.getClass().getResourceAsStream("/nichtabgegeben.png"));
-//        Image abg = new Image(display, this.getClass().getResourceAsStream("/abgegeben.png"));
-//
-//        for (int i = 0; i < 3; i++) {
-//
-//            TreeItem parent = new TreeItem(tree, SWT.CHECK);
-//            parent.setText("Tasksheet_" + (i + 1));
-//
-//            parent.setImage(ts);
-//
-//            for (int j = 0; j < 5; j++) {
-//                TreeItem subitem = new TreeItem(parent, SWT.CHECK);
-//                subitem.setText("Task_" + (j + 1));
-//                if ((j * i + 1) % 3 >= 1) {
-//                    subitem.setImage(abg);
-//
-//                } else
-//                    subitem.setImage(neg);
-//            }
-//        }
-
-        shell.pack();
-        shell.open();
-
-        return shell;
-
     }
 }

@@ -76,7 +76,7 @@ public class DownloadHandler {
             return null;
         }
 
-        System.out.println("Status ist: " + response.getStatus());
+//        System.out.println("Status ist: " + response.getStatus());
 
         List<PhoenixTaskSheet> sheets = EntityUtil.extractEntityList(response);
 
@@ -88,7 +88,7 @@ public class DownloadHandler {
     }
 
     public void createTaskOnComputer(File file, PhoenixTaskSheet taskSheet, String path, String taskTitle) throws IOException {
-
+        wrTask = PhoenixTask.getResource(client, BASE_URL);
         SelectEntity<PhoenixTask> selectByTitle = new SelectEntity<PhoenixTask>().addKey("title", taskTitle);
         ClientResponse post = wrTask.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, selectByTitle);
         PhoenixTask reqTitle = EntityUtil.extractEntity(post);
@@ -99,10 +99,10 @@ public class DownloadHandler {
 
         TextFilter t = EduFilter.INSTANCE;
         String descrFiltered = t.filter(description);
-
-        File directory = new File(path + "/" + taskSheet.getTitle());
+        System.out.println("vor directory");
+        File directory = new File(path ,taskSheet.getTitle());
         directory.mkdir();
-
+        System.out.println("nach directory");
         // task is without any given code or attachment, just text
         if (pattern.isEmpty() && attachment.isEmpty()) {
 
@@ -143,7 +143,7 @@ public class DownloadHandler {
             if (!pattern.isEmpty()) {
                 // writes each class in a file in the directory
                 for (PhoenixText clazz : pattern) {
-
+//                       clazz.getFile().renameTo(dest)
                     File taskFile = new File(directory + "/" + taskTitle, clazz.getFullname());
                     writeInFile(taskFile, "/*" + description + "*/\n" + clazz.getText());
 
@@ -223,6 +223,8 @@ public class DownloadHandler {
         return taskByTitle;
 
     }
+    
+    
     // TODO der path muss uebergeben werden, parentitems oder subitem muss
     // abgefangen werden und dann dafuer die richtige methode aufrufen
     // 

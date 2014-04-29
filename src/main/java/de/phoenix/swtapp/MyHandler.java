@@ -30,6 +30,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import de.phoenix.util.Configuration;
+
+import sun.security.krb5.Config;
+
 public class MyHandler {
     //
     private LoginHandler loginhandler;
@@ -57,8 +61,8 @@ public class MyHandler {
     }
 
     // This will create the window, which will show the downloadable files
-    public void creatdownloadshell(Shell shell, Display display) {
-        Download downloadWindow = new Download(shell, 0, this);
+    public void creatdownloadshell(Shell shell, Display display, Configuration config) {
+        Download downloadWindow = new Download(shell, 0, this, config);
         Shell downloadShell = new Shell(SWT.ON_TOP | SWT.CLOSE);
         downloadWindow.downloadShell(display, downloadShell);
     }
