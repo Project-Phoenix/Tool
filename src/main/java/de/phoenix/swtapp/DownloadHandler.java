@@ -61,7 +61,7 @@ public class DownloadHandler {
         List<String> titles = new ArrayList<String>();
         List<PhoenixTask> taskTitles = taskSheet.getTasks();
         for (int i = 0; i < taskTitles.size(); i++) {
-            System.out.println("(" + (i + 1) + ") " + taskTitles.get(i).getTitle());
+//            System.out.println("(" + (i + 1) + ") " + taskTitles.get(i).getTitle());
             titles.add(i, taskTitles.get(i).getTitle());
         }
         return titles;
@@ -99,20 +99,14 @@ public class DownloadHandler {
 
         TextFilter t = EduFilter.INSTANCE;
         String descrFiltered = t.filter(description);
-        System.out.println("vor directory");
-        File directory = new File(path ,taskSheet.getTitle());
+
+        File directory = new File(path, taskSheet.getTitle());
         directory.mkdir();
-        System.out.println("nach directory");
+
         // task is without any given code or attachment, just text
         if (pattern.isEmpty() && attachment.isEmpty()) {
 
             File taskFile = new File(directory, taskTitle + ".java");
-
-//            boolean override = fileOverride(taskFile);
-//            if(override == false) {
-//                return;
-//            }
-
             // if file doesn't exist, create this file and write the
             // description as a comment in it
             writeInFile(taskFile, "/*" + descrFiltered + "*/");
@@ -123,27 +117,18 @@ public class DownloadHandler {
 
             File taskFile = new File(directory, pattern.get(0).getFullname());
 
-//            boolean override = fileOverride(taskFile);
-//            if (override == false) {
-//                return;
-//            }
-
             writeInFile(taskFile, "/*" + descrFiltered + "*/\n" + pattern.get(0).getText());
 
             // task has at least two patterns or some attachments
         } else {
 
             File dir = new File(directory, taskTitle);
-//            boolean override = fileOverride(dir);
-//            if (override == false) {
-//                return;
-//            }
+
             dir.mkdir();
 
             if (!pattern.isEmpty()) {
                 // writes each class in a file in the directory
                 for (PhoenixText clazz : pattern) {
-//                       clazz.getFile().renameTo(dest)
                     File taskFile = new File(directory + "/" + taskTitle, clazz.getFullname());
                     writeInFile(taskFile, "/*" + description + "*/\n" + clazz.getText());
 
@@ -186,30 +171,28 @@ public class DownloadHandler {
         }
     }
 
-    public void downloadChosenTaskSheet(String path, String taskSheetTitle) throws IOException {
+    public void downloadChosenTaskSheet(String path, String taskSheetTitle, File file) throws IOException {
 
-        System.out.println(path + " " + taskSheetTitle);
         PhoenixTaskSheet wantedTaskSheet = titleToTaskSheet(taskSheetTitle);
 
         // all tasks from selected PhoenixTaskSheet
         List<PhoenixTask> tasks = wantedTaskSheet.getTasks();
 
         // ueberordner
-        File file = new File(path, taskSheetTitle);
+        File file4 = new File(path, taskSheetTitle);
 
         file.mkdir();
 
         for (int i = 0; i < tasks.size(); i++) {
 
             String title = tasks.get(i).getTitle();
-            createTaskOnComputer(file, wantedTaskSheet, path, title);
+            createTaskOnComputer(file4, wantedTaskSheet, path, title);
         }
 
     }
 
-    public void downloadChosenTask(String path, PhoenixTaskSheet taskSheet, String taskTitle) throws IOException {
+    public void downloadChosenTask(String path, PhoenixTaskSheet taskSheet, String taskTitle, File file) throws IOException {
 
-        File file = new File(path, taskTitle);
         createTaskOnComputer(file, taskSheet, path, taskTitle);
 
     }
@@ -223,9 +206,5 @@ public class DownloadHandler {
         return taskByTitle;
 
     }
-    
-    
-    // TODO der path muss uebergeben werden, parentitems oder subitem muss
-    // abgefangen werden und dann dafuer die richtige methode aufrufen
-    // 
+
 }

@@ -20,7 +20,6 @@ package de.phoenix.swtapp;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -28,6 +27,8 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -40,11 +41,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-
-import sun.security.krb5.Config;
 
 import de.phoenix.rs.entity.PhoenixTaskSheet;
 import de.phoenix.util.Configuration;
@@ -125,59 +123,72 @@ public class Download extends Composite {
 //                    k++;
                 }
             }
-            
-            //TODO: Bug beheben
+
+            // TODO: Bug beheben
             tree.addSelectionListener(new SelectionListener() {
-                
+
                 public void widgetSelected(SelectionEvent e) {
                     // TODO Auto-generated method stub
-                    
+
                 }
-                
+
                 public void widgetDefaultSelected(SelectionEvent e) {
                     // TODO Auto-generated method stub
-                    
+
                 }
             });
 
             DragSource downloadW = new DragSource(tree, DND.DROP_TARGET_MOVE | DND.DROP_COPY);
             downloadW.setTransfer(new Transfer[]{TextTransfer.getInstance(), FileTransfer.getInstance()});
-            
+
             downloadW.addDragListener(new DragSourceAdapter() {
                 @Override
                 public void dragSetData(DragSourceEvent event) {
                     if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
+                        event.data = "Test";
+
                         TreeItem[] selection = tree.getSelection();
-
+                        String tempString = "";
                         // if parent or subitem
-                        File file = new File(path);
-                        
+                        File file = new File(path, tempString);
 
-                        int tempTaskSheet = 0;
+                        for (int k = 0; k < taskSheets.size(); k++) {
+
+                            if (taskSheets.get(k).getTitle().equals(selection[0].getText())) {
+                                try {
+                                    File fileTS = new File(path, selection[0].getText());
+//                                    System.out.println(path + selection[0].getText());
+                                    downloadHandler.downloadChosenTaskSheet(path, taskSheets.get(k).getTitle(), fileTS);
+                                } catch (IOException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
+
+                            }
+
+                        }
+
                         for (int i = 0; i < taskSheets.size(); i++) {
-                            
+
                             for (int j = 0; j < taskSheets.get(i).getTasks().size(); j++) {
 
                                 if (taskSheets.get(i).getTasks().get(j).getTitle().equals(selection[0].getText())) {
-                                    System.out.println(taskSheets.get(i).getTasks().get(j).getTitle());
-                                    System.out.println(selection[0].getText());
-                                    tempTaskSheet = i;
+
+                                    try {
+                                        File fileTST = new File(path, selection[0].getText());
+//                                        System.out.println(path + selection[0].getText());;
+                                        downloadHandler.downloadChosenTask(path, taskSheets.get(i), selection[0].getText(), fileTST);
+                                    } catch (IOException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
                                 }
 
-//                                k++;
                             }
+
                         }
 
-                        try {
-                            downloadHandler.createTaskOnComputer(file, taskSheets.get(tempTaskSheet), path, selection[0].getText());
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                        
                         event.data = new String[]{file.getAbsolutePath()};
-                        
-                    System.out.println("nach event");
                     }
                     if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
                         event.data = "";
@@ -191,5 +202,7 @@ public class Download extends Composite {
             return shell;
 
         }
+        // TODO: Problem with the drag option, choosing a dir causes problem
+        // when user tries to copy files
     }
 }

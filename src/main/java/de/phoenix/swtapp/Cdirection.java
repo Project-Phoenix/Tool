@@ -87,8 +87,21 @@ public class Cdirection {
 
         // If it exists a downloadpath in the created config, the path will be
         // show in the textfield else a standard text will show up
+        // Furthermore it will check the choosen path and wrap it, if it has mor
+        // the 37 characters
         if (config.exists("downloadpath") && !pathExist) {
-            text.setText(config.getString("downloadpath"));
+
+            String temp = config.getString("downloadpath");
+            String subTemp = "";
+            String[] pathComponents = null;
+            if (temp.length() > 37) {
+                pathComponents = temp.split("\\\\");
+                subTemp = (pathComponents[0] + "\\" + pathComponents[1] + "\\...\\" + pathComponents[pathComponents.length - 1]);
+
+                text.setText(subTemp);
+            } else {
+                text.setText(temp);
+            }
         } else {
             text.setText(textHint);
             text.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
@@ -164,7 +177,7 @@ public class Cdirection {
 
             }
         });
-        System.out.println("pathform before ok" + path);
+//        System.out.println("pathform before ok" + path);
 
         GridData botLine = new GridData();
         botLine.horizontalAlignment = GridData.FILL;
@@ -184,7 +197,7 @@ public class Cdirection {
 
                 if (!text.getText().matches("Please enter your downloadpath")) {
 //                    okClicked = true;
-                    System.out.println("pathform after ok" + path);
+//                    System.out.println("pathform after ok" + path);
                 }
 
                 myhandler.checkpath(text, shell);
