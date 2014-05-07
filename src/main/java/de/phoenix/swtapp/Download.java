@@ -18,7 +18,6 @@
 
 package de.phoenix.swtapp;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,10 +26,7 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -114,13 +110,16 @@ public class Download extends Composite {
         } else {
             for (int i = 0; i < taskSheets.size(); i++) {
                 TreeItem parent = new TreeItem(tree, SWT.CHECK);
+                // Speicher das aktuelle Tasksheet in Data zum direkten Zugriff
+                // bei Selektion
+                parent.setData(taskSheets.get(i));
                 parent.setText(taskSheets.get(i).getTitle());
-//                k++;
                 for (int j = 0; j < taskSheets.get(i).getTasks().size(); j++) {
 
                     TreeItem subitem = new TreeItem(parent, SWT.CHECK);
+                    // Tu das gleiche mit dem jeweiligen Task
+                    subitem.setData(taskSheets.get(i).getTasks().get(j));
                     subitem.setText(taskSheets.get(i).getTasks().get(j).getTitle());
-//                    k++;
                 }
             }
 
@@ -139,59 +138,24 @@ public class Download extends Composite {
             });
 
             DragSource downloadW = new DragSource(tree, DND.DROP_TARGET_MOVE | DND.DROP_COPY);
-            downloadW.setTransfer(new Transfer[]{TextTransfer.getInstance(), FileTransfer.getInstance()});
+            downloadW.setTransfer(new Transfer[]{FileTransfer.getInstance()});
 
+            // TODO: Event wird sehr oft ausgeführt!
             downloadW.addDragListener(new DragSourceAdapter() {
                 @Override
                 public void dragSetData(DragSourceEvent event) {
-                    if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
-                        event.data = "Test";
+                    if (!FileTransfer.getInstance().isSupportedType(event.dataType))
+                        return;
 
-                        TreeItem[] selection = tree.getSelection();
-                        String tempString = "";
-                        // if parent or subitem
-                        File file = new File(path, tempString);
-
-                        for (int k = 0; k < taskSheets.size(); k++) {
-
-                            if (taskSheets.get(k).getTitle().equals(selection[0].getText())) {
-                                try {
-                                    File fileTS = new File(path, selection[0].getText());
-//                                    System.out.println(path + selection[0].getText());
-                                    downloadHandler.downloadChosenTaskSheet(path, taskSheets.get(k).getTitle(), fileTS);
-                                } catch (IOException e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
-                                }
-
-                            }
-
-                        }
-
-                        for (int i = 0; i < taskSheets.size(); i++) {
-
-                            for (int j = 0; j < taskSheets.get(i).getTasks().size(); j++) {
-
-                                if (taskSheets.get(i).getTasks().get(j).getTitle().equals(selection[0].getText())) {
-
-                                    try {
-                                        File fileTST = new File(path, selection[0].getText());
-//                                        System.out.println(path + selection[0].getText());;
-                                        downloadHandler.downloadChosenTask(path, taskSheets.get(i), selection[0].getText(), fileTST);
-                                    } catch (IOException e) {
-                                        // TODO Auto-generated catch block
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                            }
-
-                        }
-
-                        event.data = new String[]{file.getAbsolutePath()};
-                    }
-                    if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-                        event.data = "";
+                    // Hole ausgewähltes Tasksheet
+                    PhoenixTaskSheet taskSheet = (PhoenixTaskSheet) tree.getSelection()[0].getData();
+                    try {
+                        // Schreibe tasksheet in temporären ordner
+                        String tmpDirPath = downloadHandler.writeTaskSheetTo(taskSheet);
+                        // Übergebe order dem event
+                        event.data = new String[]{tmpDirPath};
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             });

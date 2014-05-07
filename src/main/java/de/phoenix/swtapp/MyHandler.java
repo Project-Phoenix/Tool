@@ -32,8 +32,6 @@ import org.eclipse.swt.widgets.Text;
 
 import de.phoenix.util.Configuration;
 
-import sun.security.krb5.Config;
-
 public class MyHandler {
     //
     private LoginHandler loginhandler;

@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -205,6 +206,52 @@ public class DownloadHandler {
 
         return taskByTitle;
 
+    }
+
+    public String writeTaskSheetTo(PhoenixTaskSheet taskSheet) throws IOException {
+
+        // erzeuge einen temporären ordner im tmp ordner
+        File tmpDir = new File(System.getProperty("java.io.tmpdir"), taskSheet.getTitle());
+        // lösche alten ordner wenn vorhanden
+        if (tmpDir.exists())
+            deleteDirectory(tmpDir);
+
+        // erzeuge ordner
+        tmpDir.mkdir();
+        
+        // Schreibe tasks und alle anhänge, pattern und aufgabenbeschreibungen
+        List<PhoenixTask> tasks = taskSheet.getTasks();
+        for (PhoenixTask phoenixTask : tasks) {
+            File taskDir = new File(tmpDir, phoenixTask.getTitle());
+            taskDir.mkdir();
+
+            PrintWriter writer = new PrintWriter(new File(taskDir, "Aufgabe.html"), "UTF-8");
+            writer.write(phoenixTask.getDescription());
+            writer.close();
+
+            for (PhoenixAttachment attachment : phoenixTask.getAttachments()) {
+                attachment.writeToFile(new File(taskDir, attachment.getFullname()));
+            }
+            for (PhoenixText text : phoenixTask.getPattern()) {
+                text.writeToFile(new File(taskDir, text.getFullname()));
+            }
+        }
+
+        return tmpDir.getAbsolutePath();
+    }
+
+    // rekursives löschen eines ordners
+    private void deleteDirectory(File dir) {
+
+        File[] subFiles = dir.listFiles();
+        for (int i = 0; i < subFiles.length; i++) {
+            File file = subFiles[i];
+            if (file.isDirectory())
+                deleteDirectory(file);
+            else
+                file.delete();
+        }
+        dir.delete();
     }
 
 }
