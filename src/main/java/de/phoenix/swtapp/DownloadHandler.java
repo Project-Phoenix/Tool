@@ -62,7 +62,6 @@ public class DownloadHandler {
         List<String> titles = new ArrayList<String>();
         List<PhoenixTask> taskTitles = taskSheet.getTasks();
         for (int i = 0; i < taskTitles.size(); i++) {
-//            System.out.println("(" + (i + 1) + ") " + taskTitles.get(i).getTitle());
             titles.add(i, taskTitles.get(i).getTitle());
         }
         return titles;
@@ -73,11 +72,8 @@ public class DownloadHandler {
         WebResource getTaskSheetResource = PhoenixTaskSheet.getResource(client, BASE_URL);
         ClientResponse response = getTaskSheetResource.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, new SelectAllEntity<PhoenixTask>());
         if (response.getStatus() == 404) {
-            System.out.println("Sorry, there are no Tasks available");
             return null;
         }
-
-//        System.out.println("Status ist: " + response.getStatus());
 
         List<PhoenixTaskSheet> sheets = EntityUtil.extractEntityList(response);
 
@@ -104,15 +100,15 @@ public class DownloadHandler {
         File directory = new File(path, taskSheet.getTitle());
         directory.mkdir();
 
-        // task is without any given code or attachment, just text
+        // Task is without any given code or attachment, just text
         if (pattern.isEmpty() && attachment.isEmpty()) {
 
             File taskFile = new File(directory, taskTitle + ".java");
-            // if file doesn't exist, create this file and write the
+            // If file doesn't exist, create this file and write the
             // description as a comment in it
             writeInFile(taskFile, "/*" + descrFiltered + "*/");
 
-            // task has one pattern hence one class to submit, no
+            // Task has one pattern hence one class to submit, no
             // attachments
         } else if (pattern.size() == 1 && attachment.isEmpty()) {
 
@@ -120,7 +116,7 @@ public class DownloadHandler {
 
             writeInFile(taskFile, "/*" + descrFiltered + "*/\n" + pattern.get(0).getText());
 
-            // task has at least two patterns or some attachments
+            // Task has at least two patterns or some attachments
         } else {
 
             File dir = new File(directory, taskTitle);
@@ -128,7 +124,7 @@ public class DownloadHandler {
             dir.mkdir();
 
             if (!pattern.isEmpty()) {
-                // writes each class in a file in the directory
+                // Writes each class in a file in the directory
                 for (PhoenixText clazz : pattern) {
                     File taskFile = new File(directory + "/" + taskTitle, clazz.getFullname());
                     writeInFile(taskFile, "/*" + description + "*/\n" + clazz.getText());
@@ -176,18 +172,18 @@ public class DownloadHandler {
 
         PhoenixTaskSheet wantedTaskSheet = titleToTaskSheet(taskSheetTitle);
 
-        // all tasks from selected PhoenixTaskSheet
+        // All tasks from selected PhoenixTaskSheet
         List<PhoenixTask> tasks = wantedTaskSheet.getTasks();
 
-        // ueberordner
-        File file4 = new File(path, taskSheetTitle);
+        // Parent folder
+        File fileX = new File(path, taskSheetTitle);
 
         file.mkdir();
 
         for (int i = 0; i < tasks.size(); i++) {
 
             String title = tasks.get(i).getTitle();
-            createTaskOnComputer(file4, wantedTaskSheet, path, title);
+            createTaskOnComputer(fileX, wantedTaskSheet, path, title);
         }
 
     }
@@ -210,16 +206,16 @@ public class DownloadHandler {
 
     public String writeTaskSheetTo(PhoenixTaskSheet taskSheet) throws IOException {
 
-        // erzeuge einen temporären ordner im tmp ordner
+        // Create a temporary folder in the temp directory
         File tmpDir = new File(System.getProperty("java.io.tmpdir"), taskSheet.getTitle());
-        // lösche alten ordner wenn vorhanden
+        // Delete the older folder, if it exists
         if (tmpDir.exists())
             deleteDirectory(tmpDir);
 
-        // erzeuge ordner
+        // Create Folder
         tmpDir.mkdir();
-        
-        // Schreibe tasks und alle anhänge, pattern und aufgabenbeschreibungen
+
+        // Write the task and its related attachments, pattern and description
         List<PhoenixTask> tasks = taskSheet.getTasks();
         for (PhoenixTask phoenixTask : tasks) {
             File taskDir = new File(tmpDir, phoenixTask.getTitle());
@@ -240,7 +236,37 @@ public class DownloadHandler {
         return tmpDir.getAbsolutePath();
     }
 
-    // rekursives löschen eines ordners
+    public String writeTask(PhoenixTask task) throws IOException {
+
+        // Create a temporary folder in the temp directory
+        File tmpDir = new File(System.getProperty("java.io.tmpdir"), task.getTitle());
+
+        // Delete the older folder, if it exists
+        if (tmpDir.exists())
+            deleteDirectory(tmpDir);
+
+        // Create folder
+        tmpDir.mkdir();
+
+        // Write the task and its related attachments, pattern and description
+
+        File taskDir = new File(tmpDir, task.getTitle());
+        taskDir.mkdir();
+
+        PrintWriter writer = new PrintWriter(new File(taskDir, "Aufgabe.html"), "UTF-8");
+        writer.write(task.getDescription());
+        writer.close();
+
+        for (PhoenixAttachment attachment : task.getAttachments()) {
+            attachment.writeToFile(new File(taskDir, attachment.getFullname()));
+        }
+        for (PhoenixText text : task.getPattern()) {
+            text.writeToFile(new File(taskDir, text.getFullname()));
+        }
+
+        return tmpDir.getAbsolutePath();
+    }
+    // deleting a folder recursively
     private void deleteDirectory(File dir) {
 
         File[] subFiles = dir.listFiles();

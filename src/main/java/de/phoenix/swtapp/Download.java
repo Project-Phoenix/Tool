@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import de.phoenix.rs.entity.PhoenixTask;
 import de.phoenix.rs.entity.PhoenixTaskSheet;
 import de.phoenix.util.Configuration;
 
@@ -49,6 +50,7 @@ public class Download extends Composite {
     private DownloadHandler downloadHandler;
     private Configuration config;
     private String path;
+    static int counter;
 
     public Download(Composite parent, int style, MyHandler myhandler, Configuration config) {
         super(parent, 0);
@@ -100,7 +102,6 @@ public class Download extends Composite {
 
         final List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets();
 
-//        int k = 0;
         if (taskSheets.isEmpty()) {
             MessageBox msg = new MessageBox(shell);
             msg.setMessage("Sorry, there are no tasksheets available");
@@ -110,52 +111,51 @@ public class Download extends Composite {
         } else {
             for (int i = 0; i < taskSheets.size(); i++) {
                 TreeItem parent = new TreeItem(tree, SWT.CHECK);
-                // Speicher das aktuelle Tasksheet in Data zum direkten Zugriff
-                // bei Selektion
+                // The current tasksheet will be saved in data so it can be used
+                // directly when it is selected
                 parent.setData(taskSheets.get(i));
                 parent.setText(taskSheets.get(i).getTitle());
                 for (int j = 0; j < taskSheets.get(i).getTasks().size(); j++) {
 
                     TreeItem subitem = new TreeItem(parent, SWT.CHECK);
-                    // Tu das gleiche mit dem jeweiligen Task
+                    // The tasks will be saved too as data
                     subitem.setData(taskSheets.get(i).getTasks().get(j));
                     subitem.setText(taskSheets.get(i).getTasks().get(j).getTitle());
                 }
             }
 
-            // TODO: Bug beheben
-            tree.addSelectionListener(new SelectionListener() {
-
-                public void widgetSelected(SelectionEvent e) {
-                    // TODO Auto-generated method stub
-
-                }
-
-                public void widgetDefaultSelected(SelectionEvent e) {
-                    // TODO Auto-generated method stub
-
-                }
-            });
-
             DragSource downloadW = new DragSource(tree, DND.DROP_TARGET_MOVE | DND.DROP_COPY);
             downloadW.setTransfer(new Transfer[]{FileTransfer.getInstance()});
-
-            // TODO: Event wird sehr oft ausgeführt!
+            // On Windows this event will be called a lot of times caused due to
+            // the prefetch system of Windows.
             downloadW.addDragListener(new DragSourceAdapter() {
+
                 @Override
                 public void dragSetData(DragSourceEvent event) {
+
                     if (!FileTransfer.getInstance().isSupportedType(event.dataType))
                         return;
-
-                    // Hole ausgewähltes Tasksheet
-                    PhoenixTaskSheet taskSheet = (PhoenixTaskSheet) tree.getSelection()[0].getData();
-                    try {
-                        // Schreibe tasksheet in temporären ordner
-                        String tmpDirPath = downloadHandler.writeTaskSheetTo(taskSheet);
-                        // Übergebe order dem event
-                        event.data = new String[]{tmpDirPath};
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    // Get selected tasksheet
+                    if (tree.getSelection()[0].getData() instanceof PhoenixTaskSheet) {
+                        PhoenixTaskSheet taskSheet = (PhoenixTaskSheet) tree.getSelection()[0].getData();
+                        try {
+                            // Write tasksheet in temp folder
+                            String tmpDirPath = downloadHandler.writeTaskSheetTo(taskSheet);
+                            // Commit folder to event
+                            event.data = new String[]{tmpDirPath};
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else if (tree.getSelection()[0].getData() instanceof PhoenixTask) {
+                        PhoenixTask task = (PhoenixTask) tree.getSelection()[0].getData();
+                        try {
+                            // Write the task in temp folder
+                            String tmpDirPath = downloadHandler.writeTask(task);
+                            // Commit task to event
+                            event.data = new String[]{tmpDirPath};
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             });
@@ -166,7 +166,6 @@ public class Download extends Composite {
             return shell;
 
         }
-        // TODO: Problem with the drag option, choosing a dir causes problem
-        // when user tries to copy files
+        // TODO: Import the task package
     }
 }
