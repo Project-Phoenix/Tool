@@ -41,6 +41,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -160,7 +161,7 @@ public class SWT_App {
         shell.setImage(mainicon);
 
         // Placeholderbutton for the userstatistic
-        Button placeHolder = new Button(shell, SWT.PUSH);
+        Label placeHolder = new Label(shell, SWT.BORDER);
 
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
@@ -171,7 +172,7 @@ public class SWT_App {
         gridData.verticalSpan = 2;
         gridData.verticalIndent = 10;
 
-        placeHolder.setText("PLACEHOLDER");
+        placeHolder.setText("Phoenixtool 2014."+"\n"+"Created by Phoenix in Association with Fakultät für Informatik.");
         placeHolder.setLayoutData(gridData);
 
         // DROPtarget for the GUI
@@ -335,7 +336,7 @@ public class SWT_App {
         uploadButton.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-
+                myhandler.createuploadshell(shell, display, config);
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {

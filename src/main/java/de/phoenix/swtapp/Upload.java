@@ -18,6 +18,75 @@
 
 package de.phoenix.swtapp;
 
-public class Upload {
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
 
+import de.phoenix.util.Configuration;
+
+public class Upload extends Composite {
+
+    private MyHandler myhandler;
+    private UploadHandler uploadHandler;
+    private Configuration config;
+    private String path;
+
+    public Upload(Composite parent, int style, MyHandler myhandler, Configuration config) {
+        super(parent, 0);
+        this.myhandler = myhandler;
+        this.config = config;
+        uploadHandler = new UploadHandler();
+    }
+
+    public Shell uploadShell(final Display display, final Shell shell) {
+
+        // Constructing a new shell for the upload window
+        //
+        // ---------------
+        // | 1.Tasksheet |
+        // | ----- Task1 |
+        // | ----- Task2 |
+        // | ----- Task3 |
+        // | ----- Task4 |
+        // | 2.Tasksheet |
+        // | ----- Task1 |
+        // | ----- Task2 |
+        // |-------------|
+
+        path = config.getString("downloadpath");
+
+        Image downloadicon = new Image(display, this.getClass().getResourceAsStream("/uploadicon_50x50.png"));
+        shell.setImage(downloadicon);
+
+        GridLayout gridlayout = new GridLayout();
+        gridlayout.numColumns = 2;
+
+        shell.setSize(300, 300);
+        shell.setText("Upload");
+        myhandler.centerWindow(shell);
+
+        GridData gridData_fill = new GridData();
+        gridData_fill.horizontalAlignment = GridData.FILL;
+        gridData_fill.horizontalSpan = 2;
+
+        // Setting the visualized tree of the data, which the user can select
+        // for uploading
+
+        final Tree tree = new Tree(shell, SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL);
+
+        tree.setLayout(gridlayout);
+        tree.setSize(300, 300);
+        myhandler.centerWindow(shell);
+
+        shell.pack();
+        shell.open();
+        
+        return shell;
+
+    }
 }
