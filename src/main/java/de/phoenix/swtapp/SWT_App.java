@@ -20,6 +20,8 @@ package de.phoenix.swtapp;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -40,16 +42,20 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.TreeItem;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.phoenix.rs.entity.PhoenixTaskSheet;
 import de.phoenix.util.Configuration;
 import de.phoenix.util.JSONConfiguration;
 
@@ -62,10 +68,12 @@ public class SWT_App {
     private static boolean dWindow;
     private static boolean showPathInOpt;
     private static Configuration config;
+    private DownloadHandler downloadHandler;
 
     public SWT_App() {
 
         myhandler = new MyHandler();
+        downloadHandler = new DownloadHandler();
         display = new Display();
         shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
         shell = createShell(display, shell);
@@ -168,12 +176,49 @@ public class SWT_App {
         gridData.verticalAlignment = GridData.FILL;
         gridData.grabExcessHorizontalSpace = true;
         gridData.grabExcessVerticalSpace = true;
-        gridData.horizontalSpan = 3;
+        gridData.horizontalSpan = 2;
         gridData.verticalSpan = 2;
         gridData.verticalIndent = 10;
 
-        placeHolder.setText("Phoenixtool 2014."+"\n"+"Created by Phoenix in Association with Fakultät für Informatik.");
+//        placeHolder.setText("Phoenixtool 2014." + "\n" + "Created by Phoenix in Association with Fakultät für Informatik.");
         placeHolder.setLayoutData(gridData);
+        Image bannericon = new Image(display, this.getClass().getResourceAsStream("/banner.png"));
+        
+        placeHolder.setImage(bannericon);
+
+        GridData gridDataUpload = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.verticalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.grabExcessVerticalSpace = true;
+        gridData.horizontalSpan = 2;
+        gridData.verticalSpan = 2;
+        gridData.verticalIndent = 10;
+
+        Label chooseTask = new Label(shell, SWT.BORDER_SOLID);
+        chooseTask.setText("Upload homework for");
+        chooseTask.setLayoutData(gridDataUpload);
+
+        final List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets();
+        final List<String> chooseTSItems = new ArrayList<String>();
+        Combo combo = new Combo(shell, SWT.DROP_DOWN);
+        combo.setLayoutData(gridDataUpload);
+
+        if (taskSheets.isEmpty()) {
+            MessageBox msg = new MessageBox(shell);
+            msg.setMessage("Sorry, there are no tasksheets available");
+            msg.open();
+
+            return null;
+        } else {
+            for (int i = 0; i < taskSheets.size(); i++) {
+
+                for (int j = 0; j < taskSheets.get(i).getTasks().size(); j++) {
+                    chooseTSItems.add(j, (((taskSheets.get(i).getTasks().get(j).getTitle()))));
+                }
+            }
+            combo.setItems((String[]) chooseTSItems.toArray(new String[chooseTSItems.size()]));
+        }
 
         // DROPtarget for the GUI
         final Table control = new Table(shell, SWT.FILL);
@@ -185,11 +230,11 @@ public class SWT_App {
         // related button, which will delete on click the row in the table (or
         // tableitem)
         final TableColumn tableColumnLeft = new TableColumn(control, SWT.NONE);
-        tableColumnLeft.setWidth(427);
+        tableColumnLeft.setWidth(310);
         tableColumnLeft.setText("Drag File To This Place");
 
         final TableColumn tableColumnRight = new TableColumn(control, SWT.NONE);
-        tableColumnRight.setWidth(100);
+        tableColumnRight.setWidth(85);
 
         final FileTransfer fileTransfer = FileTransfer.getInstance();
 
@@ -218,6 +263,7 @@ public class SWT_App {
 
 //                    File f = new File(files[0]);
 //                    item.setText(f.getName());
+                    item.setData(files[0]);
                     item.setText(files[0]);
                     removeB.setData(item);
 
@@ -289,7 +335,7 @@ public class SWT_App {
                     event.data = new String[]{file.getAbsolutePath()};
                 }
                 if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-                    event.data = "once upon a time";
+                    event.data = "";
                 }
             }
         });
@@ -312,7 +358,7 @@ public class SWT_App {
         grid.horizontalSpan = 1;
         grid.verticalIndent = 10;
         grid.heightHint = 50;
-        grid.widthHint = 80;
+        grid.widthHint = 230;
 
         Button downloadButton = new Button(shell, SWT.PUSH);
         downloadButton.setText("Download");

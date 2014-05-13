@@ -19,13 +19,27 @@
 package de.phoenix.swtapp;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 import de.phoenix.util.Configuration;
 
@@ -83,9 +97,14 @@ public class Upload extends Composite {
         tree.setSize(300, 300);
         myhandler.centerWindow(shell);
 
+        final FileTransfer fileTransfer = FileTransfer.getInstance();
+        final TextTransfer textTransfer = TextTransfer.getInstance();
+
+
+
         shell.pack();
         shell.open();
-        
+
         return shell;
 
     }
