@@ -130,10 +130,7 @@ public class MyHandler {
     }
 
     public void createuploadshell(Shell shell, Display display, Configuration config) {
-        Upload uploadWindow = new Upload(shell, 0, this, config);
-        Shell uploadShell = new Shell(SWT.ON_TOP|SWT.CLOSE);
-        uploadWindow.uploadShell(display, uploadShell);
-        
+     
     }
 
 }

@@ -182,7 +182,7 @@ public class SWT_App {
 
 //        placeHolder.setText("Phoenixtool 2014." + "\n" + "Created by Phoenix in Association with Fakultät für Informatik.");
         placeHolder.setLayoutData(gridData);
-        Image bannericon = new Image(display, this.getClass().getResourceAsStream("/banner.png"));
+        Image bannericon = new Image(display, this.getClass().getResourceAsStream("/phoenixbanner.png"));
         
         placeHolder.setImage(bannericon);
 

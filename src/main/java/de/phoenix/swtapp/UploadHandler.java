@@ -21,8 +21,8 @@ package de.phoenix.swtapp;
 public class UploadHandler {
 
 
-    public void getUpload() {
+    
 
-    }
+    
 
 }
