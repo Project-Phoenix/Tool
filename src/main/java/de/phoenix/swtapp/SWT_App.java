@@ -69,11 +69,13 @@ public class SWT_App {
     private static boolean showPathInOpt;
     private static Configuration config;
     private DownloadHandler downloadHandler;
+    private UploadHandler uploadHandler;
 
     public SWT_App() {
 
         myhandler = new MyHandler();
         downloadHandler = new DownloadHandler();
+        uploadHandler = new UploadHandler();
         display = new Display();
         shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
         shell = createShell(display, shell);
@@ -201,8 +203,9 @@ public class SWT_App {
 
         final List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets();
         final List<String> chooseTSItems = new ArrayList<String>();
-        Combo combo = new Combo(shell, SWT.DROP_DOWN);
+        final Combo combo = new Combo(shell, SWT.DROP_DOWN);
         combo.setLayoutData(gridDataUpload);
+        
 
         if (taskSheets.isEmpty()) {
             MessageBox msg = new MessageBox(shell);
@@ -382,7 +385,7 @@ public class SWT_App {
         uploadButton.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-                myhandler.createuploadshell(shell, display, config);
+                uploadHandler.prepare4Upload(control,combo);              
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {

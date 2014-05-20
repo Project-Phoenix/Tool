@@ -129,8 +129,5 @@ public class MyHandler {
 
     }
 
-    public void createuploadshell(Shell shell, Display display, Configuration config) {
-     
-    }
 
 }
