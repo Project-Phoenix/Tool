@@ -30,6 +30,9 @@ import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -67,12 +70,15 @@ public class DownloadHandler {
         return titles;
     }
 
-    public List<PhoenixTaskSheet> showAllTaskSheets() {
+    public List<PhoenixTaskSheet> showAllTaskSheets(Shell shell) {
 
         WebResource getTaskSheetResource = PhoenixTaskSheet.getResource(client, BASE_URL);
         ClientResponse response = getTaskSheetResource.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, new SelectAllEntity<PhoenixTask>());
         if (response.getStatus() == 404) {
-            return null;
+            MessageBox dbDown= new MessageBox(shell);
+            dbDown.setMessage("Server not available. Please try again later!");
+            dbDown.open();           
+            
         }
 
         List<PhoenixTaskSheet> sheets = EntityUtil.extractEntityList(response);

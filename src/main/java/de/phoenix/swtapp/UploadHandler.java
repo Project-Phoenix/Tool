@@ -27,6 +27,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -51,10 +53,12 @@ public class UploadHandler {
     public static Client client;
     public static String BASE_URL;
     private DownloadHandler downloadHandler;
+    private Shell shell;
 
-    public UploadHandler() {
+    public UploadHandler(Shell shell) {
         this.fileExtension = new FileExtensions();
         this.downloadHandler = new DownloadHandler();
+        this.shell = shell;
         client = PhoenixClient.create();
         BASE_URL = "http://meldanor.dyndns.org:8080/PhoenixWebService/rest";
         wrTask = PhoenixTaskSheet.getResource(client, BASE_URL);
@@ -63,7 +67,7 @@ public class UploadHandler {
 
     public void prepare4Upload(Table table, Combo combo) {
         List<String> uploadFiles = new ArrayList<String>();
-        final List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets();
+        final List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets(shell);
 
         for (int i = 0; i < table.getItems().length; i++) {
             uploadFiles.add(table.getItem(i).getText());
@@ -116,13 +120,75 @@ public class UploadHandler {
 
         PhoenixSubmission sub = new PhoenixSubmission(attachmentFileList, textFileList);
         // connects a solution to a task
- 
+
         ClientResponse post = wrSubmit.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, KeyReader.createAddTo(task, Arrays.asList(sub)));
-        System.out.println(post.getStatus());
+
+        if (post.getStatus() != 200) {
+            MessageBox clientResponse = new MessageBox(shell);
+            clientResponse.setMessage("An error ocurred. Please try it again!");
+            clientResponse.open();
+        }
 
         PhoenixSubmissionResult result = post.getEntity(PhoenixSubmissionResult.class);
 // TODO wenn nicht 200 alle result konstanten durchgehen und ueberpruefen. result.getStatus().
-        System.out.println(result.getStatusText()+"dsd");
+        switch (result.getStatus()) {
+            case COMPILED : {
+                MessageBox submissionCompiled = new MessageBox(shell);
+                submissionCompiled.setMessage("Submission compiled. Accepted!");
+                submissionCompiled.open();
+                break;
+            }
+            case ERROR : {
+                MessageBox submissionError = new MessageBox(shell);
+                if (result.getStatusText().length() > 150) {
+                    submissionError.setMessage("An error occurred! Please look at the data in the folder of the GUI for more information.");
+                    submissionError.open();
+                    File file = new File("Error.log");
+                    downloadHandler.writeInFile(file, result.getStatusText());
+                    break;
+                }else{
+                    submissionError.setMessage(result.getStatusText());
+                    submissionError.open();
+                    break;
+                }
+                
+            }
+            case MISSING_FILES : {
+                MessageBox submissionMissingFiles = new MessageBox(shell);
+                submissionMissingFiles.setMessage(result.getStatusText());
+                submissionMissingFiles.open();
+                break;
+            }
+            case OK : {
+                MessageBox submissionOk = new MessageBox(shell);
+                submissionOk.setMessage("Submission accepted!");
+                submissionOk.open();
+                break;
+            }
+            case SUBMITTED : {
+                MessageBox submissionSubmitted = new MessageBox(shell);
+                submissionSubmitted.setMessage("Submission accepted!");
+                submissionSubmitted.open();
+                break;
+            }
+            case TEST_FAILED : {
+                MessageBox submissionTestFailed = new MessageBox(shell);
+                if (result.getStatusText().length() > 150) {
+                    submissionTestFailed.setMessage("Implementation is incorrect! Please look at the data in your selected filepath for more information.");
+                    submissionTestFailed.open();
+                    File file = new File("Test_Failed.log");
+                    downloadHandler.writeInFile(file, result.getStatusText());
+                    break;
+                } else {
+                    submissionTestFailed.setMessage(result.getStatusText());
+                    submissionTestFailed.open();
+                    break;
+                }
+
+            }
+
+        }
+
     }
 
 }

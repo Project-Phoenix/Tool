@@ -43,7 +43,7 @@ import de.phoenix.util.Configuration;
 public class Cdirection {
 
     // The SWT_App will create Cdirection when the user clicks on the option
-    // button.
+    // button. It will show a browse button, which will be need to set a filepath.
     // This class uses CdirectionThread and CdirectionThread2. CdirectionThread
     // is only used for the first time. Then CdirectionThread2 will replace the
     // function of CdirectionThread.

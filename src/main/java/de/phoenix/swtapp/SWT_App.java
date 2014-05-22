@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -70,17 +71,18 @@ public class SWT_App {
     private static Configuration config;
     private DownloadHandler downloadHandler;
     private UploadHandler uploadHandler;
+    private UploadFilesThread uploadFiles;
 
     public SWT_App() {
 
         myhandler = new MyHandler();
         downloadHandler = new DownloadHandler();
-        uploadHandler = new UploadHandler();
         display = new Display();
         shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
         shell = createShell(display, shell);
         shell.setSize(650, 400);
         myhandler.centerWindow(shell);
+        uploadHandler = new UploadHandler(shell);
     }
 
     public static void main(String[] args) {
@@ -194,14 +196,14 @@ public class SWT_App {
         gridData.grabExcessHorizontalSpace = true;
         gridData.grabExcessVerticalSpace = true;
         gridData.horizontalSpan = 2;
-        gridData.verticalSpan = 2;
-        gridData.verticalIndent = 10;
-
+        gridData.verticalSpan = 3;
+        gridData.verticalIndent = 1;
+        
         Label chooseTask = new Label(shell, SWT.BORDER_SOLID);
         chooseTask.setText("Upload homework for");
         chooseTask.setLayoutData(gridDataUpload);
-
-        final List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets();
+        
+        final List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets(shell);
         final List<String> chooseTSItems = new ArrayList<String>();
         final Combo combo = new Combo(shell, SWT.DROP_DOWN);
         combo.setLayoutData(gridDataUpload);
@@ -226,7 +228,8 @@ public class SWT_App {
         // DROPtarget for the GUI
         final Table control = new Table(shell, SWT.FILL);
         control.setHeaderVisible(true);
-        control.setLinesVisible(true);
+        control.setLinesVisible(false);
+       
 
         // Dividing the table into two columns. On the left part the table
         // "control" contains the dropped filenames. On the right part the
@@ -379,13 +382,17 @@ public class SWT_App {
             }
         });
 
-        Button uploadButton = new Button(shell, SWT.PUSH);
+        final Button uploadButton = new Button(shell, SWT.PUSH);
         uploadButton.setText("Upload");
         uploadButton.setLayoutData(grid);
         uploadButton.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
-                uploadHandler.prepare4Upload(control,combo);              
+//                uploadButton.setEnabled(false);
+                uploadHandler.prepare4Upload(control,combo); 
+//                
+//                uploadFiles = new UploadFilesThread(display, loadbar, uploadButton);
+//                uploadFiles.start();
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -429,4 +436,5 @@ public class SWT_App {
         return shell;
     }
 
+    // If there is not any internet connection, the program throughs an exception
 }

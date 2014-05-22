@@ -100,7 +100,7 @@ public class Download extends Composite {
         tree.setSize(300, 300);
         myhandler.centerWindow(shell);
 
-        final List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets();
+        final List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets(shell);
 
         if (taskSheets.isEmpty()) {
             MessageBox msg = new MessageBox(shell);
