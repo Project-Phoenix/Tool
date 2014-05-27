@@ -71,7 +71,6 @@ public class SWT_App {
     private static Configuration config;
     private DownloadHandler downloadHandler;
     private UploadHandler uploadHandler;
-    private UploadFilesThread uploadFiles;
 
     public SWT_App() {
 
@@ -248,6 +247,7 @@ public class SWT_App {
         DropTarget targetShell = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_MOVE);
 
         targetShell.setTransfer(new Transfer[]{fileTransfer});
+        final Button removeB = new Button(control, SWT.PUSH);
 
         targetShell.addDropListener(new DropTargetListener() {
 
@@ -274,7 +274,7 @@ public class SWT_App {
                     removeB.setData(item);
 
                     myhandler.createTableItem(control, item, removeB, items, editor);
-
+                    uploadHandler.setVariable(removeB);
                     // Remove row when button klicked
                     removeB.addSelectionListener(new SelectionListener() {
 
@@ -389,8 +389,10 @@ public class SWT_App {
 
             public void widgetSelected(SelectionEvent e) {
 //                uploadButton.setEnabled(false);
-                uploadHandler.prepare4Upload(control,combo); 
-//                
+                if(control.getItemCount()!=0 && combo.getSelectionIndex() != -1){
+                uploadHandler.prepareUpload(control,combo); 
+                }
+//              
 //                uploadFiles = new UploadFilesThread(display, loadbar, uploadButton);
 //                uploadFiles.start();
             }

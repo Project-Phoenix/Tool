@@ -235,7 +235,14 @@ public class DownloadHandler {
                 attachment.writeToFile(new File(taskDir, attachment.getFullname()));
             }
             for (PhoenixText text : phoenixTask.getPattern()) {
-                text.writeToFile(new File(taskDir, text.getFullname()));
+
+                
+                PrintWriter writer2 = new PrintWriter(new File(taskDir, text.getFullname()), "UTF-8");
+                writer2.write("package "+taskSheet.getTitle()+"."+phoenixTask.getTitle()+";"+System.lineSeparator()+System.lineSeparator());
+                
+                writer2.write(text.getText());
+                writer2.close();
+
             }
         }
 

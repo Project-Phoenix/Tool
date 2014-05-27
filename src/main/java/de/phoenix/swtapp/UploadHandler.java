@@ -26,10 +26,19 @@ import java.util.List;
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.TreeItem;
 
 import com.sun.jersey.api.client.Client;
@@ -52,11 +61,18 @@ public class UploadHandler {
     private WebResource wrSubmit;
     public static Client client;
     public static String BASE_URL;
+    private MyHandler myhandler;
     private DownloadHandler downloadHandler;
     private Shell shell;
+    private Display display;
+    private Shell shellL;
+    private Button button;
+    private TableEditor editor;
+    private List<Button> blist = new ArrayList<Button>();;
 
     public UploadHandler(Shell shell) {
         this.fileExtension = new FileExtensions();
+        this.myhandler = new MyHandler();
         this.downloadHandler = new DownloadHandler();
         this.shell = shell;
         client = PhoenixClient.create();
@@ -65,12 +81,58 @@ public class UploadHandler {
         wrSubmit = PhoenixTask.submitResource(client, BASE_URL);
     }
 
-    public void prepare4Upload(Table table, Combo combo) {
+    public void prepareUpload(Table table, Combo combo) {
+        shellL = new Shell(display, SWT.ON_TOP | SWT.CLOSE);
+        shellL.setSize(250, 100);
+
+        myhandler.centerWindow(shellL);
+
+//        Image loginicon = new Image(display, this.getClass().getResourceAsStream("/loginkey_50x50.png"));
+//        shell.setImage(loginicon);
+
+        GridLayout gridlayout = new GridLayout();
+        gridlayout.numColumns = 1;
+        shellL.setLayout(gridlayout);
+
+        GridData gridpbar = new GridData();
+        gridpbar.horizontalAlignment = GridData.FILL;
+        gridpbar.verticalAlignment = GridData.FILL;
+
+        GridData gridpbar2 = new GridData();
+        gridpbar2.horizontalAlignment = GridData.FILL;
+        gridpbar2.grabExcessHorizontalSpace = true;
+        gridpbar2.verticalAlignment = 1;
+
+        ProgressBar pbar = new ProgressBar(shellL, SWT.NULL);
+        pbar.setLayoutData(gridpbar);
+
+        Button buttos = new Button(shellL, SWT.PUSH);
+        buttos.setText("Cancel");
+        buttos.setLayoutData(gridpbar2);
+        buttos.addSelectionListener(new SelectionListener() {
+            
+            public void widgetSelected(SelectionEvent e) {
+                shellL.close();
+                
+            }
+            
+            public void widgetDefaultSelected(SelectionEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+        });
+        shellL.setText("Uploading...");
+        
+        shellL.pack();
+        shellL.open();
+        pbar.setSelection(0);
+
         List<String> uploadFiles = new ArrayList<String>();
         final List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets(shell);
 
         for (int i = 0; i < table.getItems().length; i++) {
             uploadFiles.add(table.getItem(i).getText());
+            pbar.setSelection(pbar.getSelection() + 1);
         }
         int taskName = combo.getSelectionIndex();
         int j = 0;
@@ -78,7 +140,9 @@ public class UploadHandler {
         if (combo.getSelectionIndex() != -1) {
 
             outter : for (j = 0; j < taskSheets.size(); j++) {
+                pbar.setSelection(pbar.getSelection() + 1);
                 for (k = 0; k < taskSheets.get(j).getTasks().size(); k++) {
+                    pbar.setSelection(pbar.getSelection() + 1);
                     if (combo.getItem(taskName).equals(taskSheets.get(j).getTasks().get(k).getTitle())) {
                         break outter;
                     }
@@ -86,16 +150,15 @@ public class UploadHandler {
             }
 
             try {
-                execute(taskSheets.get(j).getTasks().get(k), uploadFiles);
+                execute(taskSheets.get(j).getTasks().get(k), uploadFiles, table, pbar);
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
 
-        // execute(,);
     }
-    public void execute(PhoenixTask task, List<String> uploadFiles) throws Exception {
+    public void execute(PhoenixTask task, List<String> uploadFiles, Table table, ProgressBar pbar) throws Exception {
 
         List<File> attachmentFileList = new ArrayList<File>();
         List<File> textFileList = new ArrayList<File>();
@@ -119,20 +182,28 @@ public class UploadHandler {
 //        PhoenixTask reqTask = list.get(0);
 
         PhoenixSubmission sub = new PhoenixSubmission(attachmentFileList, textFileList);
+
+        table.removeAll();
+        for (Button but : blist) {
+            but.dispose();
+        }
+
         // connects a solution to a task
 
         ClientResponse post = wrSubmit.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, KeyReader.createAddTo(task, Arrays.asList(sub)));
 
         if (post.getStatus() != 200) {
+            
             MessageBox clientResponse = new MessageBox(shell);
             clientResponse.setMessage("An error ocurred. Please try it again!");
             clientResponse.open();
         }
-
+        
         PhoenixSubmissionResult result = post.getEntity(PhoenixSubmissionResult.class);
 // TODO wenn nicht 200 alle result konstanten durchgehen und ueberpruefen. result.getStatus().
         switch (result.getStatus()) {
             case COMPILED : {
+                pbar.setMaximum(pbar.getMaximum());
                 MessageBox submissionCompiled = new MessageBox(shell);
                 submissionCompiled.setMessage("Submission compiled. Accepted!");
                 submissionCompiled.open();
@@ -146,12 +217,12 @@ public class UploadHandler {
                     File file = new File("Error.log");
                     downloadHandler.writeInFile(file, result.getStatusText());
                     break;
-                }else{
+                } else {
                     submissionError.setMessage(result.getStatusText());
                     submissionError.open();
                     break;
                 }
-                
+
             }
             case MISSING_FILES : {
                 MessageBox submissionMissingFiles = new MessageBox(shell);
@@ -160,12 +231,14 @@ public class UploadHandler {
                 break;
             }
             case OK : {
+                pbar.setMaximum(pbar.getMaximum());
                 MessageBox submissionOk = new MessageBox(shell);
                 submissionOk.setMessage("Submission accepted!");
                 submissionOk.open();
                 break;
             }
             case SUBMITTED : {
+                pbar.setMaximum(pbar.getMaximum());
                 MessageBox submissionSubmitted = new MessageBox(shell);
                 submissionSubmitted.setMessage("Submission accepted!");
                 submissionSubmitted.open();
@@ -188,6 +261,11 @@ public class UploadHandler {
             }
 
         }
+
+    }
+
+    public void setVariable(Button removeB) {
+        blist.add(removeB);
 
     }
 

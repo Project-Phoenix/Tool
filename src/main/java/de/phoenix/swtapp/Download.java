@@ -151,6 +151,11 @@ public class Download extends Composite {
                         try {
                             // Write the task in temp folder
                             String tmpDirPath = downloadHandler.writeTask(task);
+                            //TODO dl at downloadpath
+                            if (config.exists("downloadpath")){
+                                String pathStr= config.getString("downloadpath");
+                            }
+//                            pathStr = downloadHandler.writeTask(task);
                             // Commit task to event
                             event.data = new String[]{tmpDirPath};
                         } catch (IOException e) {

@@ -117,7 +117,7 @@ public class Cdirection {
         browseB.setText("Browse");
         browseB.setLayoutData(brow);
 
-        // By clickong on the "browser" button the user can select a download
+        // By clicking on the "browser" button the user can select a download
         // file. Furthermore the config will be created when the user selects a
         // path
         browseB.addSelectionListener(new SelectionAdapter() {
