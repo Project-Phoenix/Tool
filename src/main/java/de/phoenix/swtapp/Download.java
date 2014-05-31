@@ -51,17 +51,20 @@ public class Download extends Composite {
     private Configuration config;
     private String path;
     static int counter;
+    private Composite parent;
 
     public Download(Composite parent, int style, MyHandler myhandler, Configuration config) {
         super(parent, 0);
+        this.parent = parent;
         this.myhandler = myhandler;
         this.config = config;
+       
         downloadHandler = new DownloadHandler();
 
     }
 
     public Shell downloadShell(final Display display, final Shell shell) {
-
+        
         // Constructing a new shell for the download window
         //
         // ---------------
@@ -143,6 +146,9 @@ public class Download extends Composite {
                             String tmpDirPath = downloadHandler.writeTaskSheetTo(taskSheet);
                             // Commit folder to event
                             event.data = new String[]{tmpDirPath};
+                            
+                            shell.setMinimized(true);
+                            parent.getShell().setMinimized(true);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -158,10 +164,14 @@ public class Download extends Composite {
 //                            pathStr = downloadHandler.writeTask(task);
                             // Commit task to event
                             event.data = new String[]{tmpDirPath};
+                            shell.setMinimized(true);    
+                            
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        
                     }
+                    
                 }
             });
 

@@ -38,6 +38,7 @@ public class MyHandler {
     @SuppressWarnings("unused")
     private String path;
 
+
     // This handlerclass sepperate the GUI components from the logical
     // functions.
     public MyHandler() {

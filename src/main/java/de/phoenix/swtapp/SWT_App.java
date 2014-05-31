@@ -35,6 +35,8 @@ import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -72,10 +74,12 @@ public class SWT_App {
     private DownloadHandler downloadHandler;
     private UploadHandler uploadHandler;
 
+
     public SWT_App() {
 
         myhandler = new MyHandler();
         downloadHandler = new DownloadHandler();
+        
         display = new Display();
         shell = new Shell(SWT.ON_TOP | SWT.CLOSE);
         shell = createShell(display, shell);
@@ -374,6 +378,8 @@ public class SWT_App {
             public void widgetSelected(SelectionEvent arg0) {
                 myhandler.creatdownloadshell(shell, display, config);
 
+                
+
             }
 
             public void widgetDefaultSelected(SelectionEvent arg0) {
@@ -388,6 +394,7 @@ public class SWT_App {
         uploadButton.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
+
 //                uploadButton.setEnabled(false);
                 if(control.getItemCount()!=0 && combo.getSelectionIndex() != -1){
                 uploadHandler.prepareUpload(control,combo); 
@@ -433,6 +440,7 @@ public class SWT_App {
             }
         });
 
+        
         shell.pack();
 
         return shell;
