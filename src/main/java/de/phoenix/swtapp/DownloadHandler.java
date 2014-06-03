@@ -33,14 +33,12 @@ import javax.ws.rs.core.MediaType;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 import de.phoenix.filter.EduFilter;
 import de.phoenix.filter.TextFilter;
 import de.phoenix.rs.EntityUtil;
-import de.phoenix.rs.PhoenixClient;
 import de.phoenix.rs.entity.PhoenixAttachment;
 import de.phoenix.rs.entity.PhoenixTask;
 import de.phoenix.rs.entity.PhoenixTaskSheet;
@@ -49,15 +47,14 @@ import de.phoenix.rs.key.SelectAllEntity;
 import de.phoenix.rs.key.SelectEntity;
 
 public class DownloadHandler {
-    public static Client client;
-    public static String BASE_URL;
+
     private WebResource wrTask;
     private WebResource wrSheet;
 
     public DownloadHandler() {
-        client = PhoenixClient.create();
-        BASE_URL = "http://meldanor.dyndns.org:8080/PhoenixWebService/rest";
-        wrSheet = PhoenixTaskSheet.getResource(client, BASE_URL);
+//        SWT_App.client = PhoenixClient.create();
+//        BASE_URL = "http://meldanor.dyndns.org:8080/PhoenixWebService/rest";
+        wrSheet = PhoenixTaskSheet.getResource(SWT_App.client, SWT_App.BASE_URL);
     }
 
     public List<String> showTasks(PhoenixTaskSheet taskSheet) {
@@ -72,13 +69,13 @@ public class DownloadHandler {
 
     public List<PhoenixTaskSheet> showAllTaskSheets(Shell shell) {
 
-        WebResource getTaskSheetResource = PhoenixTaskSheet.getResource(client, BASE_URL);
+        WebResource getTaskSheetResource = PhoenixTaskSheet.getResource(SWT_App.client, SWT_App.BASE_URL);
         ClientResponse response = getTaskSheetResource.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, new SelectAllEntity<PhoenixTask>());
         if (response.getStatus() == 404) {
-            MessageBox dbDown= new MessageBox(shell);
+            MessageBox dbDown = new MessageBox(shell);
             dbDown.setMessage("Server not available. Please try again later!");
-            dbDown.open();           
-            
+            dbDown.open();
+
         }
 
         List<PhoenixTaskSheet> sheets = EntityUtil.extractEntityList(response);
@@ -91,7 +88,7 @@ public class DownloadHandler {
     }
 
     public void createTaskOnComputer(File file, PhoenixTaskSheet taskSheet, String path, String taskTitle) throws IOException {
-        wrTask = PhoenixTask.getResource(client, BASE_URL);
+        wrTask = PhoenixTask.getResource(SWT_App.client, SWT_App.BASE_URL);
         SelectEntity<PhoenixTask> selectByTitle = new SelectEntity<PhoenixTask>().addKey("title", taskTitle);
         ClientResponse post = wrTask.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, selectByTitle);
         PhoenixTask reqTitle = EntityUtil.extractEntity(post);
@@ -236,10 +233,9 @@ public class DownloadHandler {
             }
             for (PhoenixText text : phoenixTask.getPattern()) {
 
-                
                 PrintWriter writer2 = new PrintWriter(new File(taskDir, text.getFullname()), "UTF-8");
-                writer2.write("package "+taskSheet.getTitle()+"."+phoenixTask.getTitle()+";"+System.lineSeparator()+System.lineSeparator());
-                
+                writer2.write("package " + taskSheet.getTitle() + "." + phoenixTask.getTitle() + ";" + System.lineSeparator() + System.lineSeparator());
+
                 writer2.write(text.getText());
                 writer2.close();
 

@@ -26,7 +26,6 @@ import java.util.List;
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -38,36 +37,26 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.TreeItem;
 
-import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
-import de.phoenix.rs.EntityUtil;
-import de.phoenix.rs.PhoenixClient;
 import de.phoenix.rs.entity.PhoenixSubmission;
 import de.phoenix.rs.entity.PhoenixSubmissionResult;
 import de.phoenix.rs.entity.PhoenixTask;
 import de.phoenix.rs.entity.PhoenixTaskSheet;
 import de.phoenix.rs.key.KeyReader;
-import de.phoenix.rs.key.SelectEntity;
+
 
 public class UploadHandler {
 
     private FileExtensions fileExtension;
-    private WebResource wrTask;
     private WebResource wrSubmit;
-    public static Client client;
-    public static String BASE_URL;
     private MyHandler myhandler;
     private DownloadHandler downloadHandler;
     private Shell shell;
     private Display display;
     private Shell shellL;
-    private Button button;
-    private TableEditor editor;
     private List<Button> blist = new ArrayList<Button>();;
 
     public UploadHandler(Shell shell) {
@@ -75,10 +64,8 @@ public class UploadHandler {
         this.myhandler = new MyHandler();
         this.downloadHandler = new DownloadHandler();
         this.shell = shell;
-        client = PhoenixClient.create();
-        BASE_URL = "http://meldanor.dyndns.org:8080/PhoenixWebService/rest";
-        wrTask = PhoenixTaskSheet.getResource(client, BASE_URL);
-        wrSubmit = PhoenixTask.submitResource(client, BASE_URL);
+//        wrTask = PhoenixTaskSheet.getResource(SWT_App.client, SWT_App.BASE_URL);
+        wrSubmit = PhoenixTask.submitResource(SWT_App.client, SWT_App.BASE_URL);
     }
 
     public void prepareUpload(Table table, Combo combo) {
@@ -103,26 +90,26 @@ public class UploadHandler {
         gridpbar2.grabExcessHorizontalSpace = true;
         gridpbar2.verticalAlignment = 1;
 
-        ProgressBar pbar = new ProgressBar(shellL, SWT.NULL);
+        ProgressBar pbar = new ProgressBar(shellL, SWT.INDETERMINATE);
         pbar.setLayoutData(gridpbar);
 
         Button buttos = new Button(shellL, SWT.PUSH);
         buttos.setText("Cancel");
         buttos.setLayoutData(gridpbar2);
         buttos.addSelectionListener(new SelectionListener() {
-            
+
             public void widgetSelected(SelectionEvent e) {
                 shellL.close();
-                
+
             }
-            
+
             public void widgetDefaultSelected(SelectionEvent e) {
                 // TODO Auto-generated method stub
-                
+
             }
         });
         shellL.setText("Uploading...");
-        
+
         shellL.pack();
         shellL.open();
         pbar.setSelection(0);
@@ -131,8 +118,8 @@ public class UploadHandler {
         final List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets(shell);
 
         for (int i = 0; i < table.getItems().length; i++) {
-            uploadFiles.add(table.getItem(i).getText());
-            pbar.setSelection(pbar.getSelection() + 1);
+            uploadFiles.add((String) table.getItem(i).getData());
+
         }
         int taskName = combo.getSelectionIndex();
         int j = 0;
@@ -140,7 +127,7 @@ public class UploadHandler {
         if (combo.getSelectionIndex() != -1) {
 
             outter : for (j = 0; j < taskSheets.size(); j++) {
-                pbar.setSelection(pbar.getSelection() + 1);
+
                 for (k = 0; k < taskSheets.get(j).getTasks().size(); k++) {
                     pbar.setSelection(pbar.getSelection() + 1);
                     if (combo.getItem(taskName).equals(taskSheets.get(j).getTasks().get(k).getTitle())) {
@@ -156,6 +143,7 @@ public class UploadHandler {
                 e.printStackTrace();
             }
         }
+        shellL.close();
 
     }
     public void execute(PhoenixTask task, List<String> uploadFiles, Table table, ProgressBar pbar) throws Exception {
@@ -173,7 +161,7 @@ public class UploadHandler {
 
         }
 
-        SelectEntity<PhoenixTask> selectByTitle = new SelectEntity<PhoenixTask>().addKey("title", task.getTitle());
+//        SelectEntity<PhoenixTask> selectByTitle = new SelectEntity<PhoenixTask>().addKey("title", task.getTitle());
 
 //        ClientResponse post = wrTask.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, selectByTitle);
 //        System.out.println("Title is " + task.getTitle());
@@ -193,12 +181,12 @@ public class UploadHandler {
         ClientResponse post = wrSubmit.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, KeyReader.createAddTo(task, Arrays.asList(sub)));
 
         if (post.getStatus() != 200) {
-            
+
             MessageBox clientResponse = new MessageBox(shell);
             clientResponse.setMessage("An error ocurred. Please try it again!");
             clientResponse.open();
         }
-        
+
         PhoenixSubmissionResult result = post.getEntity(PhoenixSubmissionResult.class);
 // TODO wenn nicht 200 alle result konstanten durchgehen und ueberpruefen. result.getStatus().
         switch (result.getStatus()) {

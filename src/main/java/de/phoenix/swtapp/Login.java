@@ -108,7 +108,7 @@ public class Login extends Composite {
         // 1.Row
         Label progressBarTitle = new Label(shell, SWT.NULL);
         progressBarTitle.setText("Loading");
-        progressBarTitle.setBackground(getDisplay().getSystemColor(SWT.COLOR_CYAN));
+//        progressBarTitle.setBackground(getDisplay().getSystemColor(SWT.COLOR_CYAN));
         progressBarTitle.setLayoutData(gridDataS1);
 
         final Label messageAns = new Label(shell, SWT.NULL);
