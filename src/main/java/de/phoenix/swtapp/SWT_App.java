@@ -64,11 +64,11 @@ public class SWT_App {
     private static MyHandler myhandler;
     private static Display display;
     private static Shell shell;
-//    private static CdirectionThread thread;
-//    private static CdirectionThread2 thread2;
+    private static CdirectionThread thread;
+    private static CdirectionThread2 thread2;
     private static boolean dWindow;
-//    private static boolean showPathInOpt;
-    private static Configuration config;
+    private static boolean showPathInOpt;
+    public static Configuration config;
     private DownloadHandler downloadHandler;
     private UploadHandler uploadHandler;
     public static Client client;
@@ -106,34 +106,34 @@ public class SWT_App {
         // first time using GUI"progress, where the user should select a
         // downloadpath. After that the user will be redirect to the main
         // window.
-//        if (!config.exists("downloadpath")) {
-//            dWindow = true;
-//            thread = new CdirectionThread(showPathInOpt, config);
-//            thread.start();
-//
-//            while (true) {
-//                if (display.isDisposed()) {
-//                    break;
-//                }
-//                if (!thread.isAlive()) {
-//
-//                    shell.open();
-//                    while (!shell.isDisposed()) {
-//                        if (!display.readAndDispatch())
-//                            display.sleep();
-//
-//                    }
-//
-//                    display.dispose();
-//                }
-//            }
-//        }
-//
-//        else {
-//            @SuppressWarnings("unused")
-//            String path = config.getString("downloadpath");
-//            showPathInOpt = true;
-//        }
+        if (!config.exists("downloadpath")) {
+            dWindow = true;
+            thread = new CdirectionThread(showPathInOpt, config);
+            thread.start();
+
+            while (true) {
+                if (display.isDisposed()) {
+                    break;
+                }
+                if (!thread.isAlive()) {
+
+                    shell.open();
+                    while (!shell.isDisposed()) {
+                        if (!display.readAndDispatch())
+                            display.sleep();
+
+                    }
+
+                    display.dispose();
+                }
+            }
+        }
+
+        else {
+            @SuppressWarnings("unused")
+            String path = config.getString("downloadpath");
+            showPathInOpt = true;
+        }
 
         if (!dWindow) {
             shell.open();
@@ -363,7 +363,7 @@ public class SWT_App {
         GridData grid = new GridData(SWT.FILL);
         grid.horizontalSpan = 1;
         grid.verticalIndent = 10;
-        grid.heightHint = 65;
+        grid.heightHint = 50;
         grid.widthHint = 230;
 
         Button downloadButton = new Button(shell, SWT.PUSH);
@@ -390,6 +390,12 @@ public class SWT_App {
             public void widgetSelected(SelectionEvent e) {
 
 //                uploadButton.setEnabled(false);
+                if (control.getItemCount() != 0 && combo.getSelectionIndex() == -1) {
+                    uploadButton.setToolTipText("Please select a target in the dropdown menu");
+                }
+                if (control.getItemCount() == 0) {
+                    uploadButton.setToolTipText("Please add some items before upload");
+                }
                 if (control.getItemCount() != 0 && combo.getSelectionIndex() != -1) {
                     uploadHandler.prepareUpload(control, combo);
                 }
@@ -404,22 +410,22 @@ public class SWT_App {
             }
         });
 
-//        Button optionButton = new Button(shell, SWT.PUSH);
-//        optionButton.setLayoutData(grid);
-//        optionButton.setText("Option");
-//        optionButton.addSelectionListener(new SelectionListener() {
-//
-//            public void widgetSelected(SelectionEvent e) {
-//                thread2 = new CdirectionThread2(showPathInOpt, config);
-//                thread2.start();
-//
-//            }
-//
-//            public void widgetDefaultSelected(SelectionEvent e) {
-//                // TODO Auto-generated method stub
-//
-//            }
-//        });
+        Button optionButton = new Button(shell, SWT.PUSH);
+        optionButton.setLayoutData(grid);
+        optionButton.setText("Option");
+        optionButton.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent e) {
+                thread2 = new CdirectionThread2(showPathInOpt, config);
+                thread2.start();
+
+            }
+
+            public void widgetDefaultSelected(SelectionEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+        });
 
         Button loginButton = new Button(shell, SWT.PUSH);
         loginButton.setText("Login");

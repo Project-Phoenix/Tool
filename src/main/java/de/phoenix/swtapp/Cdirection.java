@@ -26,6 +26,7 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -43,7 +44,8 @@ import de.phoenix.util.Configuration;
 public class Cdirection {
 
     // The SWT_App will create Cdirection when the user clicks on the option
-    // button. It will show a browse button, which will be need to set a filepath.
+    // button. It will show a browse button, which will be need to set a
+    // filepath.
     // This class uses CdirectionThread and CdirectionThread2. CdirectionThread
     // is only used for the first time. Then CdirectionThread2 will replace the
     // function of CdirectionThread.
@@ -61,6 +63,9 @@ public class Cdirection {
 
     public Shell createPathDirectionShell(final Shell shell, boolean showPathInOpt, final Configuration config) {
 
+        Image optionicon = new Image(shell.getDisplay(), this.getClass().getResourceAsStream("/optionicon_50x50.png"));
+        shell.setImage(optionicon);
+        
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 6;
         gridLayout.makeColumnsEqualWidth = true;

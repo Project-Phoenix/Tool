@@ -209,6 +209,44 @@ public class DownloadHandler {
 
     public String writeTaskSheetTo(PhoenixTaskSheet taskSheet) throws IOException {
 
+        // Create a temporary folder in the downloadpath directory
+        File atDLdirection = new File(SWT_App.config.getString("downloadpath"), taskSheet.getTitle());
+        // Delete the older folder, if it exists
+//        if (tmpDir.exists())
+//            deleteDirectory(tmpDir);
+
+        // Create Folder
+        atDLdirection.mkdir();
+
+        // Write the task and its related attachments, pattern and description
+        List<PhoenixTask> tasks = taskSheet.getTasks();
+        for (PhoenixTask phoenixTask : tasks) {
+            File taskDir = new File(atDLdirection, phoenixTask.getTitle());
+            taskDir.mkdir();
+
+            PrintWriter writer = new PrintWriter(new File(taskDir, "Aufgabe.html"), "UTF-8");
+            writer.write(phoenixTask.getDescription());
+            writer.close();
+
+            for (PhoenixAttachment attachment : phoenixTask.getAttachments()) {
+                attachment.writeToFile(new File(taskDir, attachment.getFullname()));
+            }
+            for (PhoenixText text : phoenixTask.getPattern()) {
+
+                PrintWriter writer2 = new PrintWriter(new File(taskDir, text.getFullname()), "UTF-8");
+                writer2.write("package " + taskSheet.getTitle() + "." + phoenixTask.getTitle() + ";" + System.lineSeparator() + System.lineSeparator());
+
+                writer2.write(text.getText());
+                writer2.close();
+
+            }
+        }
+
+        return atDLdirection.getAbsolutePath();
+    }
+
+    public String writeTaskSheetToTmp(PhoenixTaskSheet taskSheet) throws IOException {
+
         // Create a temporary folder in the temp directory
         File tmpDir = new File(System.getProperty("java.io.tmpdir"), taskSheet.getTitle());
         // Delete the older folder, if it exists
@@ -247,12 +285,56 @@ public class DownloadHandler {
 
     public String writeTask(PhoenixTask task) throws IOException {
 
+        // Create a temporary folder in the downloadpath directory
+        File atDLdir = new File(SWT_App.config.getString("downloadpath"), task.getTitle());
+
+        // Delete the older folder, if it exists
+//        if (tmpDir.exists())
+//            deleteDirectory(tmpDir);
+
+        // Create folder
+        atDLdir.mkdir();
+
+        // Write the task and its related attachments, pattern and description
+
+        File taskDir = new File(atDLdir, task.getTitle());
+        taskDir.mkdir();
+
+        PrintWriter writer = new PrintWriter(new File(taskDir, "Aufgabe.html"), "UTF-8");
+        writer.write(task.getDescription());
+        writer.close();
+
+        for (PhoenixAttachment attachment : task.getAttachments()) {
+            attachment.writeToFile(new File(taskDir, attachment.getFullname()));
+        }
+        for (PhoenixText text : task.getPattern()) {
+            text.writeToFile(new File(taskDir, text.getFullname()));
+        }
+
+        return atDLdir.getAbsolutePath();
+    }
+    // deleting a folder recursively
+    private void deleteDirectory(File dir) {
+
+        File[] subFiles = dir.listFiles();
+        for (int i = 0; i < subFiles.length; i++) {
+            File file = subFiles[i];
+            if (file.isDirectory())
+                deleteDirectory(file);
+            else
+                file.delete();
+        }
+        dir.delete();
+    }
+
+    public String writeTaskTmp(PhoenixTask task) throws IOException {
+
         // Create a temporary folder in the temp directory
         File tmpDir = new File(System.getProperty("java.io.tmpdir"), task.getTitle());
 
         // Delete the older folder, if it exists
         if (tmpDir.exists())
-            deleteDirectory(tmpDir);
+            deleteDirectoryTmp(tmpDir);
 
         // Create folder
         tmpDir.mkdir();
@@ -276,13 +358,13 @@ public class DownloadHandler {
         return tmpDir.getAbsolutePath();
     }
     // deleting a folder recursively
-    private void deleteDirectory(File dir) {
+    private void deleteDirectoryTmp(File dir) {
 
         File[] subFiles = dir.listFiles();
         for (int i = 0; i < subFiles.length; i++) {
             File file = subFiles[i];
             if (file.isDirectory())
-                deleteDirectory(file);
+                deleteDirectoryTmp(file);
             else
                 file.delete();
         }

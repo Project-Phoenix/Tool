@@ -38,7 +38,6 @@ public class MyHandler {
     @SuppressWarnings("unused")
     private String path;
 
-
     // This handlerclass sepperate the GUI components from the logical
     // functions.
     public MyHandler() {
@@ -61,7 +60,7 @@ public class MyHandler {
 
     // This will create the window, which will show the downloadable files
     public void creatdownloadshell(Shell shell, Display display, Configuration config) {
-        Download downloadWindow = new Download(shell, 0, this, config);
+        Download downloadWindow = new Download(shell, 0, this);
         Shell downloadShell = new Shell(SWT.ON_TOP | SWT.CLOSE);
         downloadWindow.downloadShell(display, downloadShell);
     }
@@ -129,6 +128,5 @@ public class MyHandler {
         }
 
     }
-
 
 }

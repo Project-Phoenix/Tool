@@ -18,15 +18,14 @@ package de.phoenix.swtapp;
  * along with Tool.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//In this class there will be all logical functions for the login / registration
 public abstract class LoginHandler {
 
-    
     public abstract void login();
 
     public void getLoginData() {
         // TODO Auto-generated method stub
 
     }
- 
 
 }

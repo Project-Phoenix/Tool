@@ -22,23 +22,23 @@ import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
@@ -46,22 +46,21 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import de.phoenix.rs.entity.PhoenixTask;
 import de.phoenix.rs.entity.PhoenixTaskSheet;
-import de.phoenix.util.Configuration;
 
 public class Download extends Composite {
 
     private MyHandler myhandler;
     private DownloadHandler downloadHandler;
-    private Configuration config;
+//    private Configuration config;
 //    private String path;
     static int counter;
     private Composite parent;
 
-    public Download(Composite parent, int style, MyHandler myhandler, Configuration config) {
+    public Download(Composite parent, int style, MyHandler myhandler) {
         super(parent, 0);
         this.parent = parent;
         this.myhandler = myhandler;
-        this.config = config;
+//        this.config = config;
 
         downloadHandler = new DownloadHandler();
 
@@ -97,50 +96,17 @@ public class Download extends Composite {
         GridData gridData_fill = new GridData();
         gridData_fill.horizontalAlignment = GridData.FILL;
         gridData_fill.horizontalSpan = 2;
-        
+
         // Setting the visualized tree of the data, which the user can select
         // and download
 
-      
         final Tree tree = new Tree(shell, SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL);
 
         tree.setLayoutData(gridData_fill);
         tree.setSize(300, 300);
         myhandler.centerWindow(shell);
-        
-        final TreeEditor editor = new TreeEditor(tree);
-        editor.horizontalAlignment = SWT.LEFT;
-        editor.grabHorizontal = true;
 
-        tree.addMouseListener(new MouseAdapter() {
-          public void mouseDown(MouseEvent event) {
-            final TreeItem item = tree.getSelection()[0];
-
-            final Button bn = new Button(tree, SWT.NONE);
-            bn.setText("click");
-            bn.setFocus();
-
-            bn.addSelectionListener(new SelectionListener() {
-
-              public void widgetSelected(SelectionEvent arg0) {
-                int style = SWT.ICON_QUESTION | SWT.YES | SWT.NO;
-
-                MessageBox messageBox = new MessageBox(shell, style);
-                messageBox.setMessage("Message");
-                int rc = messageBox.open();
-
-                item.setText(rc + "");
-                bn.dispose();
-              }
-
-              public void widgetDefaultSelected(SelectionEvent arg0) {
-              }
-            });
-
-            editor.setEditor(bn, item);
-          }
-        });
-
+        // Adding treeitems and the data
         final List<PhoenixTaskSheet> taskSheets = downloadHandler.showAllTaskSheets(shell);
 
         if (taskSheets.isEmpty()) {
@@ -164,6 +130,62 @@ public class Download extends Composite {
                     subitem.setText(taskSheets.get(i).getTasks().get(j).getTitle());
                 }
             }
+            // With a rightclick a menu will be shown. Instead of dowloading by
+            // dragging the data, the user can download it with a rightclick and
+            // the files will be saved in the selected downloadpath
+            final Menu menu = new Menu(tree);
+            tree.setMenu(menu);
+            menu.addMenuListener(new MenuAdapter() {
+                public void menuShown(MenuEvent e) {
+                    MenuItem[] items = menu.getItems();
+                    for (int i = 0; i < items.length; i++) {
+                        items[i].dispose();
+                    }
+                    MenuItem newItem = new MenuItem(menu, SWT.NONE);
+                    newItem.setText("Download");
+
+                    newItem.addSelectionListener(new SelectionListener() {
+
+                        public void widgetSelected(SelectionEvent e) {
+
+                            if (tree.getSelection()[0].getData() instanceof PhoenixTaskSheet) {
+                                PhoenixTaskSheet taskSheet = (PhoenixTaskSheet) tree.getSelection()[0].getData();
+                                try {
+                                    // Write tasksheet in downloadpath
+                                    String tmpDirPath = downloadHandler.writeTaskSheetTo(taskSheet);
+
+                                    // Commit folder to event
+
+                                    e.data = new String[]{tmpDirPath};
+
+//                                    shell.setMinimized(true);
+//                                    parent.getShell().setMinimized(true);
+                                } catch (IOException es) {
+                                    es.printStackTrace();
+                                }
+                            } else if (tree.getSelection()[0].getData() instanceof PhoenixTask) {
+                                PhoenixTask task = (PhoenixTask) tree.getSelection()[0].getData();
+                                try {
+                                    // Write the task in downloadpath folder
+                                    String dlPath = downloadHandler.writeTask(task);
+
+                                    // Commit task to event
+                                    e.data = new String[]{dlPath};
+
+                                } catch (IOException es) {
+                                    es.printStackTrace();
+                                }
+
+                            }
+
+                        }
+
+                        public void widgetDefaultSelected(SelectionEvent e) {
+
+                        }
+                    });
+                }
+            });
 
             DragSource downloadW = new DragSource(tree, DND.DROP_TARGET_MOVE | DND.DROP_COPY);
             downloadW.setTransfer(new Transfer[]{FileTransfer.getInstance()});
@@ -181,7 +203,7 @@ public class Download extends Composite {
                         PhoenixTaskSheet taskSheet = (PhoenixTaskSheet) tree.getSelection()[0].getData();
                         try {
                             // Write tasksheet in temp folder
-                            String tmpDirPath = downloadHandler.writeTaskSheetTo(taskSheet);
+                            String tmpDirPath = downloadHandler.writeTaskSheetToTmp(taskSheet);
 
                             // Commit folder to event
 
@@ -196,16 +218,12 @@ public class Download extends Composite {
                         PhoenixTask task = (PhoenixTask) tree.getSelection()[0].getData();
                         try {
                             // Write the task in temp folder
-                            String tmpDirPath = downloadHandler.writeTask(task);
-                            // TODO dl at downloadpath
-                            if (config.exists("downloadpath")) {
-                                String pathStr = config.getString("downloadpath");
-                                event.data = new String[]{pathStr};
-                            }
-//                            pathStr = downloadHandler.writeTask(task);
+                            String tmpDirPath = downloadHandler.writeTaskTmp(task);
+
                             // Commit task to event
                             event.data = new String[]{tmpDirPath};
                             shell.setMinimized(true);
+                            parent.getShell().setMinimized(true);
 
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -216,12 +234,11 @@ public class Download extends Composite {
                 }
             });
 
-            
             shell.open();
 
             return shell;
 
         }
-        // TODO: Import the task package
+
     }
 }

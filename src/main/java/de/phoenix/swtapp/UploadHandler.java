@@ -47,7 +47,6 @@ import de.phoenix.rs.entity.PhoenixTask;
 import de.phoenix.rs.entity.PhoenixTaskSheet;
 import de.phoenix.rs.key.KeyReader;
 
-
 public class UploadHandler {
 
     private FileExtensions fileExtension;
@@ -143,6 +142,7 @@ public class UploadHandler {
                 e.printStackTrace();
             }
         }
+        combo.deselectAll();
         shellL.close();
 
     }
@@ -188,7 +188,9 @@ public class UploadHandler {
         }
 
         PhoenixSubmissionResult result = post.getEntity(PhoenixSubmissionResult.class);
-// TODO wenn nicht 200 alle result konstanten durchgehen und ueberpruefen. result.getStatus().
+
+        // The User get a response message from the server, when the submission
+        // failed or succeeded
         switch (result.getStatus()) {
             case COMPILED : {
                 pbar.setMaximum(pbar.getMaximum());

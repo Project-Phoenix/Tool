@@ -38,6 +38,10 @@ import org.eclipse.swt.widgets.Text;
  * 
  */
 
+// The GUI for this login funtion is created but disabled,
+// because we did not have enough time to implement the
+// userregistration and login functionality
+
 public class Login extends Composite {
     private MyHandler myhandler;
     @SuppressWarnings("unused")

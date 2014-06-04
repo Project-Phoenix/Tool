@@ -26,21 +26,21 @@ import org.eclipse.swt.widgets.Shell;
 import de.phoenix.util.Configuration;
 
 public class CdirectionThread extends Thread {
-    
+
     private boolean showPathInOpt;
     private Configuration config;
 
     public CdirectionThread(boolean showPathInOpt, Configuration config) {
-        this.showPathInOpt=showPathInOpt;
-        this.config=config;
-     }
+        this.showPathInOpt = showPathInOpt;
+        this.config = config;
+    }
 
     // This thread is needed when the user starts the GUI for the first time. So
     // it is possible for the user to choose a downloadpath in a parallel thread
     // while the main thread is waiting until this thread is dead.
     public void run() {
         final Display display = new Display();
-        final Shell shell = new Shell( SWT.CLOSE);
+        final Shell shell = new Shell(SWT.CLOSE);
         shell.setSize(350, 100);
 
         display.syncExec(new Runnable() {

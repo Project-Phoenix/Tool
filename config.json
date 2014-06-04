@@ -1,3 +1,4 @@
 {
-  "webserviceURL" : "http://meldanor.dyndns.org:8080/PhoenixWebService/rest"
+  "webserviceURL" : "http://meldanor.dyndns.org:8080/PhoenixWebService/rest",
+  "downloadpath" : "C:\\Users\\Sir Lui\\Desktop\\MUELL"
 }

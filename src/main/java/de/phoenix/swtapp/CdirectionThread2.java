@@ -58,7 +58,7 @@ public class CdirectionThread2 extends Thread {
                 display.dispose();
             }
         });
-       
+
     }
-    
+
 }
